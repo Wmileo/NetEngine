@@ -85,6 +85,7 @@
 				7EC916061CA907CA00B25B50 /* AppDelegate.m */,
 				7EC916081CA907CA00B25B50 /* ViewController.h */,
 				7EC916091CA907CA00B25B50 /* ViewController.m */,
+				7EC916271CA9081300B25B50 /* NetEngine */,
 				7EC9160B1CA907CA00B25B50 /* Main.storyboard */,
 				7EC9160E1CA907CA00B25B50 /* Assets.xcassets */,
 				7EC916101CA907CA00B25B50 /* LaunchScreen.storyboard */,
@@ -109,6 +110,13 @@
 				7EC9161E1CA907CB00B25B50 /* Info.plist */,
 			);
 			path = NetRequestDemoTests;
+			sourceTree = "<group>";
+		};
+		7EC916271CA9081300B25B50 /* NetEngine */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = NetEngine;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
