@@ -10,26 +10,86 @@
 
 typedef NS_ENUM(NSInteger, REQUEST_TYPE){
     REQUEST_POST,//post请求
-    REQUEST_GET//getq
+    REQUEST_GET//get请求
 };
 
 #define __SELF [[[self class] alloc] init]
 
 
+@protocol NetRequestConfig <NSObject>
 
-@protocol NetEngineDelegate <NSObject>
+/**
+ *  请求主服务器
+ */
+-(NSString *)requestMainURL;
 
--(NSString *)mainURL;
--(NSDictionary *)commonParams;
+/**
+ *  请求公共参数
+ */
+-(NSDictionary *)requestCommonParams;
 
--(void)requestStart;
--(void)requestSuccess;
--(void)requestFailure;
+#pragma mark - 请求返回操作
+/**
+ *  判断返回操作是否成功
+ */
+-(BOOL)requestIsSuccessWithResponse:(id)responseObject;
+
+/**
+ *  获取返回的错误信息
+ */
+-(NSString *)requestFailureMessageWithResponse:(id)responseObject;
+
+/**
+ *  处理错误码
+ */
+-(void)requestHandleWithErrorCodeWithResponse:(id)responseObject;
+
+/**
+ *  错误信息
+ */
+-(NSDictionary *)requestLinkErrorMessage;
+
+
+#pragma mark - 请求过程相关操作
+/**
+ *  加载动画显示
+ */
+-(void)showLoading;
+
+/**
+ *  加载动画消失
+ */
+-(void)disappearLoading;
+
+/**
+ *  显示提示信息
+ */
+-(void)showTips:(NSString *)tips;
 
 @end
 
 
+@protocol NetEngineDelegate <NSObject>
 
+@optional
+
+#pragma mark - 请求回调
+/**
+ *  请求开始时调用
+ */
+-(void)requestWillStart;
+
+/**
+ *  请求成功时调用
+ */
+-(void)requestDidSuccess;
+
+/**
+ *  请求失败时调用
+ */
+-(void)requestDidFailure;
+
+@end
 
 @interface NetEngine : NSObject
 
@@ -37,9 +97,28 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 /**
  *  设置超时时间，默认5秒
  */
--(NetEngine *)requestTimeoutInterval:(NSTimeInterval)timeInterval;
+-(id)requestTimeoutInterval:(NSTimeInterval)timeInterval;
+
+/**
+ *  配置类 NetRequestConfig
+ */
+-(id)requestWithConfig:(id<NetRequestConfig>)config;
+
+/**
+ *  加载时需要显示动画
+ */
+-(id)requestNeedShowLoading;
+
+/**
+ *  发生错误时需要显示错误提示
+ */
+-(id)requestNeedShowErrorTips;
 
 
+/**
+ *  请求回调
+ */
+@property (nonatomic, assign) id<NetEngineDelegate> delegate;
 
 #pragma mark - 请求内容
 /**
@@ -49,7 +128,6 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
  *  @param params 请求参数
  *  @param type   请求类型Post，Get
  *
- *  可重写
  */
 -(id)request:(NSString *)path
   withParams:(NSDictionary *)params
@@ -62,7 +140,6 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
  *  @param params 完整请求参数
  *  @param type   请求类型Post，Get
  *
- *  可重写
  */
 -(id)requestFullPath:(NSString *)path
       withFullParams:(NSDictionary *)params
@@ -72,68 +149,41 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 
 #pragma mark - 发起请求
 /**
- *  基础 可定制
+ *  基础
  *
- *  @param showLoad 是否显示等待状态
- *  @param showTips 是否显示错误提示弹出框
  *  @param success  成功
  *  @param failure  失败（包含所有失败）
  *  @param mistake  由自身参数引起的失败
  *  @param link     由网络或服务器引起的失败
  */
--(void)requestShowLoading:(BOOL)showLoad
-            showErrorTips:(BOOL)showTips
-                  success:(void (^)(id JSON))success
-                  failure:(void (^)(id JSON))failure
-              failMistake:(void (^)(id JSON))mistake
-                 failLink:(void (^)(id JSON))link;
+-(void)requestSuccess:(void (^)(id JSON))success
+              failure:(void (^)(id JSON))failure
+          failMistake:(void (^)(id JSON))mistake
+             failLink:(void (^)(id JSON))link;
 
 
 /**
- *  基础 统一处理错误 可定制
+ *  基础 统一处理错误
  *
- *  @param showLoad 是否显示等待状态
- *  @param showTips 是否显示错误提示弹出框
  *  @param success  成功
  *  @param failure  失败（包含所有失败）
  */
--(void)requestShowLoading:(BOOL)showLoad
-            showErrorTips:(BOOL)showTips
-                  success:(void (^)(id JSON))success
-                  failure:(void (^)(id JSON))failure;
+-(void)requestSuccess:(void (^)(id JSON))success
+              failure:(void (^)(id JSON))failure;
 
 
 /**
- *  显示等待状态和错误提示 处理成功和失败
- *
- *  @param success 成功
- *  @param failure 失败
- */
--(void)requestShowLoadingAndErrorTipsSuccess:(void (^)(id JSON))success
-                                     failure:(void (^)(id JSON))failure;
-
-/**
- *  显示等待状态和错误提示 只处理成功状态
- *
- *  @param success 成功
- */
--(void)requestShowLoadingAndErrorTipsSuccess:(void (^)(id JSON))success;
-
-/**
- *  不显示任何状态 只处理成功状态
+ *  只处理成功状态
  *
  *  @param success 成功
  */
 -(void)requestSuccess:(void (^)(id JSON))success;
 
 /**
- *  不显示任何状态 处理成功和失败
- *
- *  @param success 成功
- *  @param failure 失败
+ *  只发送请求 不处理返回结果
  */
--(void)requestSuccess:(void (^)(id JSON))success
-              failure:(void (^)(id JSON))failure;
+-(void)requestOnly;
+
 
 
 
