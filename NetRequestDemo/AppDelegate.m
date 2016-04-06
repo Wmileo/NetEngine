@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import "NetEngine.h"
+#import "NetTipsConfig.h"
 
 @interface AppDelegate ()
 
@@ -17,6 +19,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    [NetEngine requestWithTipsConfig:[[NetTipsConfig alloc] init]];
+    
     return YES;
 }
 

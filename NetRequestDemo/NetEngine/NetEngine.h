@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+
+
 typedef NS_ENUM(NSInteger, REQUEST_TYPE){
     REQUEST_POST,//post请求
     REQUEST_GET//get请求
@@ -16,17 +18,22 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 #define __SELF [[[self class] alloc] init]
 
 
+/**
+ *  请求配置
+ */
 @protocol NetRequestConfig <NSObject>
 
-/**
- *  请求主服务器
- */
--(NSString *)requestMainURL;
-
+@optional
 /**
  *  请求公共参数
  */
 -(NSDictionary *)requestCommonParams;
+
+@required
+/**
+ *  请求主服务器
+ */
+-(NSString *)requestMainURL;
 
 #pragma mark - 请求返回操作
 /**
@@ -49,31 +56,40 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
  */
 -(NSDictionary *)requestLinkErrorMessage;
 
+@end
 
-#pragma mark - 请求过程相关操作
+
 /**
- *  加载动画显示
+ *  请求过程相关tips操作
+ */
+@protocol NetTipsConfig <NSObject>
+
+@optional
+
+/**
+ *  加载动画显示，没实现的话就没有任何提示
  */
 -(void)showLoading;
 
 /**
- *  加载动画消失
+ *  加载动画消失，没实现的话就没有任何提示
  */
 -(void)disappearLoading;
 
 /**
- *  显示提示信息
+ *  显示提示信息，没实现的话就没有任何提示
  */
 -(void)showTips:(NSString *)tips;
 
 @end
 
-
+/**
+ *  请求回调
+ */
 @protocol NetEngineDelegate <NSObject>
 
 @optional
 
-#pragma mark - 请求回调
 /**
  *  请求开始时调用
  */
@@ -91,6 +107,17 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 
 @end
 
+
+
+
+/**
+ *  推荐写法：
+ *
+ *  1，配置公共 NetTipsConfig
+ *  2，每个请求服务器均继承该类，并配置NetRequestConfig
+ *  3，每个请求服务器类作为父类，子类按业务模块写请求
+ *
+ */
 @interface NetEngine : NSObject
 
 #pragma mark - 请求配置
@@ -102,7 +129,18 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 /**
  *  配置类 NetRequestConfig
  */
--(id)requestWithConfig:(id<NetRequestConfig>)config;
+-(void)requestWithConfig:(id<NetRequestConfig>)config;
+
+#pragma mark - 请求提醒配置
+/**
+ *  配置公共 NetTipsConfig
+ */
++(void)requestWithTipsConfig:(id<NetTipsConfig>)tipsConfig;
+
+/**
+ *  配置定制 NetTipsConfig
+ */
+-(void)requestWithTipsConfig:(id<NetTipsConfig>)tipsConfig;
 
 /**
  *  加载时需要显示动画
@@ -113,7 +151,6 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
  *  发生错误时需要显示错误提示
  */
 -(id)requestNeedShowErrorTips;
-
 
 /**
  *  请求回调
@@ -183,8 +220,6 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
  *  只发送请求 不处理返回结果
  */
 -(void)requestOnly;
-
-
 
 
 @end

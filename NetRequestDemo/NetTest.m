@@ -55,17 +55,7 @@
     return @{@"errMsg":@"error-link"};
 }
 
--(void)showLoading{
-    NSLog(@"showLoading");
-}
 
--(void)disappearLoading{
-    NSLog(@"disappearLoading");
-}
-
--(void)showTips:(NSString *)tips{
-    NSLog(@"showTips:%@",tips);
-}
 
 
 -(void)requestWillStart{

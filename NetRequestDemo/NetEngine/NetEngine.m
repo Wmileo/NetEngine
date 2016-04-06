@@ -15,9 +15,9 @@
 
 @property (nonatomic, assign) NSTimeInterval timeoutInterval;
 
-
 #pragma mark - 请求内容
 @property (nonatomic, assign) id<NetRequestConfig> config;
+@property (nonatomic, assign) id<NetTipsConfig> tipsConfig;
 @property (nonatomic, copy) NSString *path;
 @property (nonatomic, assign) REQUEST_TYPE type;
 @property (nonatomic, copy) NSDictionary *params;
@@ -30,15 +30,35 @@
 
 @implementation NetEngine
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        if (__tipsConfig) {
+            [self requestWithTipsConfig:__tipsConfig];
+        }
+    }
+    return self;
+}
+
 #pragma mark - 请求配置
 -(id)requestTimeoutInterval:(NSTimeInterval)timeInterval{
     self.httpManager.requestSerializer.timeoutInterval = timeInterval;
     return self;
 }
 
--(id)requestWithConfig:(id<NetRequestConfig>)config{
+-(void)requestWithConfig:(id<NetRequestConfig>)config{
     self.config = config;
-    return self;
+}
+
+#pragma mark - 请求提醒配置
+static id<NetTipsConfig> __tipsConfig;
++(void)requestWithTipsConfig:(id<NetTipsConfig>)tipsConfig{
+    __tipsConfig = tipsConfig;
+}
+
+-(void)requestWithTipsConfig:(id<NetTipsConfig>)tipsConfig{
+    self.tipsConfig = tipsConfig;
 }
 
 -(id)requestNeedShowLoading{
@@ -55,7 +75,9 @@
 -(id)request:(NSString *)path withParams:(NSDictionary *)params type:(REQUEST_TYPE)type{
     self.path = [NSString stringWithFormat:@"%@%@",[self.config requestMainURL],path];
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:params];
-    [dic addEntriesFromDictionary:[self.config requestCommonParams]];
+    if ([self.config respondsToSelector:@selector(requestCommonParams)]) {
+        [dic addEntriesFromDictionary:[self.config requestCommonParams]];
+    }
     self.params = [dic copy];
     self.type = type;
     return self;
@@ -75,7 +97,7 @@
         [self.delegate requestWillStart];
     }
     
-    if (self.needShowLoading) [self.config showLoading];
+    if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(showLoading)]) [self.tipsConfig showLoading];
     
     switch (self.type) {
         case REQUEST_GET:
@@ -98,7 +120,7 @@
             break;
             
         default:
-            if (self.needShowLoading) [self.config disappearLoading];
+            if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
             break;
     }
 }
@@ -123,10 +145,10 @@
         
         if (mistake) mistake(responseObject);
         if (failure) failure(responseObject);
-        if (self.needShowErrorTips) [self.config showTips:tips];
+        if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:)]) [self.tipsConfig showTips:tips];
     }
     
-    if (self.needShowLoading) [self.config disappearLoading];
+    if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
 }
 
 -(void)requestFailureTask:(NSURLSessionDataTask *)task error:(NSError *)error failure:(void (^)(id))failure failLink:(void (^)(id))link{
@@ -141,8 +163,8 @@
     if (link) link(responseObject);
     if (failure) failure(responseObject);
     
-    if (self.needShowLoading) [self.config disappearLoading];
-    if (self.needShowErrorTips) [self.config showTips:[self.config requestFailureMessageWithResponse:responseObject]];
+    if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
+    if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:)]) [self.tipsConfig showTips:[self.config requestFailureMessageWithResponse:responseObject]];
 }
 
 -(void)requestSuccess:(void (^)(id))success failure:(void (^)(id))failure{
