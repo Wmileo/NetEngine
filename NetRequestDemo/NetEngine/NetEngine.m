@@ -99,10 +99,12 @@ static id<NetTipsConfig> __tipsConfig;
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(showLoading)]) [self.tipsConfig showLoading];
     
+    NSDictionary *params = [self.config respondsToSelector:@selector(requestFinalParamsWithSplicedParams:)] ? [self.config requestFinalParamsWithSplicedParams:self.params] : self.params;
+    
     switch (self.type) {
         case REQUEST_GET:
         {
-            [self.httpManager GET:self.path parameters:self.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            [self.httpManager GET:self.path parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                 [self requestSuccessTask:task responseObject:responseObject success:success failure:failure failMistake:mistake];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [self requestFailureTask:task error:error failure:failure failLink:link];
@@ -111,7 +113,7 @@ static id<NetTipsConfig> __tipsConfig;
             break;
         case REQUEST_POST:
         {
-            [self.httpManager POST:self.path parameters:self.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            [self.httpManager POST:self.path parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                 [self requestSuccessTask:task responseObject:responseObject success:success failure:failure failMistake:mistake];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [self requestFailureTask:task error:error failure:failure failLink:link];
@@ -189,9 +191,5 @@ static id<NetTipsConfig> __tipsConfig;
     }
     return _httpManager;
 }
-
-
-
-
 
 @end

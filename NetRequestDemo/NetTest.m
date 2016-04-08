@@ -55,7 +55,9 @@
     return @{@"errMsg":@"error-link"};
 }
 
-
+-(NSDictionary *)requestFinalParamsWithSplicedParams:(NSDictionary *)spliced{
+    return @{@"hh":@"mm"};
+}
 
 
 -(void)requestWillStart{

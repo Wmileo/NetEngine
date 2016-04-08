@@ -29,6 +29,11 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
  */
 -(NSDictionary *)requestCommonParams;
 
+/**
+ *  对拼接后的参数进行处理得到最终请求参数
+ */
+-(NSDictionary *)requestFinalParamsWithSplicedParams:(NSDictionary *)spliced;
+
 @required
 /**
  *  请求主服务器

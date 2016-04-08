@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "NetEngine"
-  s.version      = "0.0.2"
+  s.version      = "0.0.3"
   s.summary      = "NetEngine : 网络请求封装"
   s.description  = <<-DESC
 					 网络请求封装
