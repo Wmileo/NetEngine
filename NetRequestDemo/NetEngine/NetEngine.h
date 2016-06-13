@@ -17,9 +17,8 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 
 #define __SELF [[[self class] alloc] init]
 
-
 /**
- *  请求配置
+ *  请求配置  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
  */
 @protocol NetRequestConfig <NSObject>
 
@@ -65,7 +64,7 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 
 
 /**
- *  请求过程相关tips操作
+ *  请求过程相关tips操作   －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
  */
 @protocol NetTipsConfig <NSObject>
 
@@ -89,7 +88,7 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 @end
 
 /**
- *  请求回调
+ *  请求回调  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
  */
 @protocol NetEngineDelegate <NSObject>
 
@@ -113,17 +112,37 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 @end
 
 
-
-
 /**
+ *  请求默认配置  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
+ */
+@protocol NetEngineDataSource <NSObject>
+
+@optional
+/**
+ *  返回默认配置
+ */
+-(id<NetRequestConfig>)requestDefaultConfig;
+
+
+@end
+
+
+/**  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
  *  推荐写法：
  *
+ * 一 ，以服务器为划分类
  *  1，配置公共 NetTipsConfig
  *  2，每个请求服务器均继承该类，并配置NetRequestConfig
  *  3，每个请求服务器类作为父类，子类按业务模块写请求
+ *  4，每个请求均是类方法
+ *
+ * 二 ，以业务为划分类
+ *  1，配置公共 NetTipsConfig
+ *  2，每个业务网络请求模块子类继承该类，实现NetEngineDataSource
+ *  3，每个请求请求均是类方法
  *
  */
-@interface NetEngine : NSObject
+@interface NetEngine : NSObject <NetEngineDataSource>
 
 #pragma mark - 请求配置
 /**
@@ -225,6 +244,7 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
  *  只发送请求 不处理返回结果
  */
 -(void)requestOnly;
+
 
 
 @end

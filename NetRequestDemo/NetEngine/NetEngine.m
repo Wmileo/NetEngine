@@ -36,6 +36,9 @@
     if (self) {
         if (__tipsConfig) {
             [self requestWithTipsConfig:__tipsConfig];
+            if ([self respondsToSelector:@selector(requestDefaultConfig)]) {
+                [self requestWithConfig:[self performSelector:@selector(requestDefaultConfig)]];
+            }
         }
     }
     return self;

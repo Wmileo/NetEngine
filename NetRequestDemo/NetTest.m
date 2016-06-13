@@ -19,11 +19,7 @@
 
 }
 
--(instancetype)init{
-    self = [super init];
-    if (self) {
-        [self requestWithConfig:self];
-    }
+-(id<NetRequestConfig>)defaultConfig{
     return self;
 }
 
