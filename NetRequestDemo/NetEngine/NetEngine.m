@@ -163,7 +163,7 @@ static id<NetTipsConfig> __tipsConfig;
 
     NSLog(@"\nlink---------------------\n%@ \n-----------------------\n%@",error,task.currentRequest);
     
-    NSDictionary *responseObject = [self.config requestLinkErrorMessage];
+    NSDictionary *responseObject = [self.config requestLinkErrorMessageWithResponse:task.response];
     
     if (link) link(responseObject);
     if (failure) failure(responseObject);

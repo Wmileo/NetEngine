@@ -47,7 +47,7 @@
     NSLog(@"%@",responseObject[@"errCode"]);
 }
 
--(NSDictionary *)requestLinkErrorMessage{
+-(NSDictionary *)requestLinkErrorMessageWithResponse:(NSURLResponse *)response{
     return @{@"errMsg":@"error-link"};
 }
 
