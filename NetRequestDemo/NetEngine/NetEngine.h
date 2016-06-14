@@ -143,20 +143,30 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 
 #pragma mark - 请求配置
 /**
- *  设置超时时间，默认5秒
+ *  设置全局超时时间，默认15秒
+ */
++(void)setupTimeoutInterval:(NSTimeInterval)timeInterval;
+
+/**
+ *  设置超时时间
  */
 -(id)requestTimeoutInterval:(NSTimeInterval)timeInterval;
 
 /**
- *  配置类 NetRequestConfig
+ *  配置全局 NetRequestConfig
+ */
++(void)setupDefaultConfig:(id<NetRequestConfig>)config;
+
+/**
+ *  配置 NetRequestConfig
  */
 -(void)requestWithConfig:(id<NetRequestConfig>)config;
 
 #pragma mark - 请求提醒配置
 /**
- *  配置公共 NetTipsConfig
+ *  配置全局 NetTipsConfig
  */
-+(void)requestWithTipsConfig:(id<NetTipsConfig>)tipsConfig;
++(void)setupDefaultTipsConfig:(id<NetTipsConfig>)tipsConfig;
 
 /**
  *  配置定制 NetTipsConfig

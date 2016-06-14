@@ -20,7 +20,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-    [NetEngine requestWithTipsConfig:[[NetTipsConfig alloc] init]];
+    [NetEngine setupDefaultTipsConfig:[[NetTipsConfig alloc] init]];
+    [NetEngine setupTimeoutInterval:10];
     
     return YES;
 }

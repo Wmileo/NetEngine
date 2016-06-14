@@ -34,20 +34,35 @@
 {
     self = [super init];
     if (self) {
+        
         if (__tipsConfig) {
             [self requestWithTipsConfig:__tipsConfig];
         }
+        
         if ([self respondsToSelector:@selector(requestDefaultConfig)]) {
             [self requestWithConfig:[self performSelector:@selector(requestDefaultConfig)]];
+        }else if (__requestConfig) {
+            [self requestWithConfig:__requestConfig];
         }
+        
     }
     return self;
 }
 
 #pragma mark - 请求配置
+static NSTimeInterval __timeInterval;
++(void)setupTimeoutInterval:(NSTimeInterval)timeInterval{
+    __timeInterval = timeInterval;
+}
+
 -(id)requestTimeoutInterval:(NSTimeInterval)timeInterval{
     self.httpManager.requestSerializer.timeoutInterval = timeInterval;
     return self;
+}
+
+static id<NetRequestConfig> __requestConfig;
++(void)setupDefaultConfig:(id<NetRequestConfig>)config{
+    __requestConfig = config;
 }
 
 -(void)requestWithConfig:(id<NetRequestConfig>)config{
@@ -56,7 +71,7 @@
 
 #pragma mark - 请求提醒配置
 static id<NetTipsConfig> __tipsConfig;
-+(void)requestWithTipsConfig:(id<NetTipsConfig>)tipsConfig{
++(void)setupDefaultTipsConfig:(id<NetTipsConfig>)tipsConfig{
     __tipsConfig = tipsConfig;
 }
 
@@ -190,7 +205,7 @@ static id<NetTipsConfig> __tipsConfig;
     if (!_httpManager) {
         _httpManager = [[AFHTTPSessionManager alloc] init];
         _httpManager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html",@"text/plain", nil];
-        _httpManager.requestSerializer.timeoutInterval = 5;
+        _httpManager.requestSerializer.timeoutInterval = __timeInterval == 0 ? 15 : __timeInterval;
     }
     return _httpManager;
 }
