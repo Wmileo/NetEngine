@@ -36,9 +36,9 @@
     if (self) {
         if (__tipsConfig) {
             [self requestWithTipsConfig:__tipsConfig];
-            if ([self respondsToSelector:@selector(requestDefaultConfig)]) {
-                [self requestWithConfig:[self performSelector:@selector(requestDefaultConfig)]];
-            }
+        }
+        if ([self respondsToSelector:@selector(requestDefaultConfig)]) {
+            [self requestWithConfig:[self performSelector:@selector(requestDefaultConfig)]];
         }
     }
     return self;
@@ -78,8 +78,8 @@ static id<NetTipsConfig> __tipsConfig;
 -(id)request:(NSString *)path withParams:(NSDictionary *)params type:(REQUEST_TYPE)type{
     self.path = [NSString stringWithFormat:@"%@%@",[self.config requestMainURL],path];
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:params];
-    if ([self.config respondsToSelector:@selector(requestCommonParams)]) {
-        [dic addEntriesFromDictionary:[self.config requestCommonParams]];
+    if ([self respondsToSelector:@selector(requestCommonParams)]) {
+        [dic addEntriesFromDictionary:[self performSelector:@selector(requestCommonParams)]];
     }
     self.params = [dic copy];
     self.type = type;
@@ -102,7 +102,7 @@ static id<NetTipsConfig> __tipsConfig;
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(showLoading)]) [self.tipsConfig showLoading];
     
-    NSDictionary *params = [self.config respondsToSelector:@selector(requestFinalParamsWithSplicedParams:)] ? [self.config requestFinalParamsWithSplicedParams:self.params] : self.params;
+    NSDictionary *params = [self respondsToSelector:@selector(requestFinalParamsWithSplicedParams:)] ? [self requestFinalParamsWithSplicedParams:self.params] : self.params;
     
     switch (self.type) {
         case REQUEST_GET:

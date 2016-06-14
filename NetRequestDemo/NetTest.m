@@ -19,7 +19,7 @@
 
 }
 
--(id<NetRequestConfig>)defaultConfig{
+-(id<NetRequestConfig>)requestDefaultConfig{
     return self;
 }
 

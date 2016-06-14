@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-
-
 typedef NS_ENUM(NSInteger, REQUEST_TYPE){
     REQUEST_POST,//post请求
     REQUEST_GET//get请求
@@ -21,17 +19,6 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
  *  请求配置  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
  */
 @protocol NetRequestConfig <NSObject>
-
-@optional
-/**
- *  请求公共参数
- */
--(NSDictionary *)requestCommonParams;
-
-/**
- *  对拼接后的参数进行处理得到最终请求参数
- */
--(NSDictionary *)requestFinalParamsWithSplicedParams:(NSDictionary *)spliced;
 
 @required
 /**
@@ -122,6 +109,16 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
  *  返回默认配置
  */
 -(id<NetRequestConfig>)requestDefaultConfig;
+
+/**
+ *  请求公共参数
+ */
+-(NSDictionary *)requestCommonParams;
+
+/**
+ *  对拼接后的参数进行处理得到最终请求参数
+ */
+-(NSDictionary *)requestFinalParamsWithSplicedParams:(NSDictionary *)spliced;
 
 
 @end
