@@ -160,10 +160,10 @@ static id<NetTipsConfig> __tipsConfig;
     if ([self.delegate respondsToSelector:@selector(requestDidFailure)]) {
         [self.delegate requestDidFailure];
     }
-
+    
     NSLog(@"\nlink---------------------\n%@ \n-----------------------\n%@",error,task.currentRequest);
     
-    NSDictionary *responseObject = [self.config requestLinkErrorMessageWithResponse:task.response];
+    NSDictionary *responseObject = [self.config requestLinkErrorMessageWithError:error response:task.response];
     
     if (link) link(responseObject);
     if (failure) failure(responseObject);

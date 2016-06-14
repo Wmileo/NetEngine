@@ -45,7 +45,7 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 /**
  *  链接错误信息
  */
--(NSDictionary *)requestLinkErrorMessageWithResponse:(NSURLResponse *)response;
+-(NSDictionary *)requestLinkErrorMessageWithError:(NSError *)error response:(NSURLResponse *)response;
 
 @end
 
