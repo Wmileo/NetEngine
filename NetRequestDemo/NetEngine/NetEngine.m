@@ -25,6 +25,7 @@
 #pragma mark - 请求提示
 @property (nonatomic, assign) BOOL needShowLoading;
 @property (nonatomic, assign) BOOL needShowErrorTips;
+@property (nonatomic, assign) BOOL needShowSuccessTips;
 
 @end
 
@@ -100,6 +101,11 @@ static id<NetTipsConfig> __tipsConfig;
     return self;
 }
 
+-(id)requestNeedShowSuccessTips{
+    self.needShowSuccessTips = YES;
+    return self;
+}
+
 #pragma mark - 请求内容
 -(id)request:(NSString *)path withParams:(NSDictionary *)params type:(REQUEST_TYPE)type{
     self.path = [NSString stringWithFormat:@"%@%@",[self.config requestMainURL],path];
@@ -122,6 +128,8 @@ static id<NetTipsConfig> __tipsConfig;
 #pragma mark - 发起请求
 -(void)requestSuccess:(void (^)(id))success failure:(void (^)(id))failure failMistake:(void (^)(id))mistake failLink:(void (^)(id))link{
     
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    
     if ([self.delegate respondsToSelector:@selector(requestWillStart)]) {
         [self.delegate requestWillStart];
     }
@@ -136,9 +144,13 @@ static id<NetTipsConfig> __tipsConfig;
             [self.httpManager GET:self.path parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                 [self requestSuccessTask:task responseObject:responseObject success:success failure:failure failMistake:mistake];
                 [self releaseConfig];
+                [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [self requestFailureTask:task error:error failure:failure failLink:link];
                 [self releaseConfig];
+                [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
             }];
         }
             break;
@@ -147,15 +159,21 @@ static id<NetTipsConfig> __tipsConfig;
             [self.httpManager POST:self.path parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                 [self requestSuccessTask:task responseObject:responseObject success:success failure:failure failMistake:mistake];
                 [self releaseConfig];
+                [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [self requestFailureTask:task error:error failure:failure failLink:link];
                 [self releaseConfig];
+                [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
             }];
         }
             break;
             
         default:
             if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
             break;
     }
 }
@@ -165,12 +183,15 @@ static id<NetTipsConfig> __tipsConfig;
         [self.delegate requestDidSuccess];
     }
     
+    NSString *tips = [self.config requestMessageWithResponse:responseObject];
+
     if ([self.config requestIsSuccessWithResponse:responseObject]) {
-        NSLog(@"\nsuccess------------------\n%@ \n---------------",task.currentRequest);
+//        NSLog(@"\nsuccess------------------\n%@ \n---------------",task.currentRequest);
         if (success) success(responseObject);
+        if (self.needShowSuccessTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:tips type:RESPONSE_TIPS_SUCCESS];
+        
     }else{
         
-        NSString *tips = [self.config requestFailureMessageWithResponse:responseObject];
         NSLog(@"\nmistake------------------\n%@ \n---------------\n%@\n----------------%@",
               responseObject,
               task.currentRequest,
@@ -180,7 +201,7 @@ static id<NetTipsConfig> __tipsConfig;
         
         if (mistake) mistake(responseObject);
         if (failure) failure(responseObject);
-        if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:)]) [self.tipsConfig showTips:tips];
+        if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:tips type:RESPONSE_TIPS_FAIL];
     }
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
@@ -200,7 +221,7 @@ static id<NetTipsConfig> __tipsConfig;
     if (failure) failure(responseObject);
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
-    if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:)]) [self.tipsConfig showTips:[self.config requestFailureMessageWithResponse:responseObject]];
+    if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:[self.config requestMessageWithResponse:responseObject] type:RESPONSE_TIPS_LINK_FAIL];
     
 }
 

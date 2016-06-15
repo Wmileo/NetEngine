@@ -13,6 +13,12 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
     REQUEST_GET//get请求
 };
 
+typedef NS_ENUM(NSInteger, RESPONSE_TIPS_TYPE){
+    RESPONSE_TIPS_SUCCESS,//返回成功
+    RESPONSE_TIPS_FAIL,//返回失败
+    RESPONSE_TIPS_LINK_FAIL//请求失败
+};
+
 #define __SELF [[[self class] alloc] init]
 
 /**
@@ -33,9 +39,9 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 -(BOOL)requestIsSuccessWithResponse:(id)responseObject;
 
 /**
- *  获取返回的错误信息
+ *  获取返回的信息
  */
--(NSString *)requestFailureMessageWithResponse:(id)responseObject;
+-(NSString *)requestMessageWithResponse:(id)responseObject;
 
 /**
  *  处理错误码
@@ -70,7 +76,7 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 /**
  *  显示提示信息，没实现的话就没有任何提示
  */
--(void)showTips:(NSString *)tips;
+-(void)showTips:(NSString *)tips type:(RESPONSE_TIPS_TYPE)type;
 
 @end
 
@@ -177,6 +183,11 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
  *  加载时需要显示动画
  */
 -(id)requestNeedShowLoading;
+
+/**
+ *  请求成功时显示成功提示
+ */
+-(id)requestNeedShowSuccessTips;
 
 /**
  *  发生错误时需要显示错误提示
