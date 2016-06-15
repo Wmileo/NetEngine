@@ -16,8 +16,8 @@
 @property (nonatomic, assign) NSTimeInterval timeoutInterval;
 
 #pragma mark - 请求内容
-@property (nonatomic, assign) id<NetRequestConfig> config;
-@property (nonatomic, assign) id<NetTipsConfig> tipsConfig;
+@property (nonatomic, strong) id<NetRequestConfig> config;
+@property (nonatomic, strong) id<NetTipsConfig> tipsConfig;
 @property (nonatomic, copy) NSString *path;
 @property (nonatomic, assign) REQUEST_TYPE type;
 @property (nonatomic, copy) NSDictionary *params;
@@ -29,6 +29,10 @@
 @end
 
 @implementation NetEngine
+
+-(void)dealloc{
+    
+}
 
 - (instancetype)init
 {
@@ -49,6 +53,11 @@
     return self;
 }
 
+-(void)releaseConfig{
+    self.config = nil;
+    self.tipsConfig = nil;
+}
+
 #pragma mark - 请求配置
 static NSTimeInterval __timeInterval;
 +(void)setupTimeoutInterval:(NSTimeInterval)timeInterval{
@@ -65,8 +74,9 @@ static id<NetRequestConfig> __requestConfig;
     __requestConfig = config;
 }
 
--(void)requestWithConfig:(id<NetRequestConfig>)config{
+-(id)requestWithConfig:(id<NetRequestConfig>)config{
     self.config = config;
+    return self;
 }
 
 #pragma mark - 请求提醒配置
@@ -75,8 +85,9 @@ static id<NetTipsConfig> __tipsConfig;
     __tipsConfig = tipsConfig;
 }
 
--(void)requestWithTipsConfig:(id<NetTipsConfig>)tipsConfig{
+-(id)requestWithTipsConfig:(id<NetTipsConfig>)tipsConfig{
     self.tipsConfig = tipsConfig;
+    return self;
 }
 
 -(id)requestNeedShowLoading{
@@ -124,8 +135,10 @@ static id<NetTipsConfig> __tipsConfig;
         {
             [self.httpManager GET:self.path parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                 [self requestSuccessTask:task responseObject:responseObject success:success failure:failure failMistake:mistake];
+                [self releaseConfig];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [self requestFailureTask:task error:error failure:failure failLink:link];
+                [self releaseConfig];
             }];
         }
             break;
@@ -133,8 +146,10 @@ static id<NetTipsConfig> __tipsConfig;
         {
             [self.httpManager POST:self.path parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                 [self requestSuccessTask:task responseObject:responseObject success:success failure:failure failMistake:mistake];
+                [self releaseConfig];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [self requestFailureTask:task error:error failure:failure failLink:link];
+                [self releaseConfig];
             }];
         }
             break;
@@ -169,6 +184,7 @@ static id<NetTipsConfig> __tipsConfig;
     }
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
+    
 }
 
 -(void)requestFailureTask:(NSURLSessionDataTask *)task error:(NSError *)error failure:(void (^)(id))failure failLink:(void (^)(id))link{
@@ -185,6 +201,7 @@ static id<NetTipsConfig> __tipsConfig;
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
     if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:)]) [self.tipsConfig showTips:[self.config requestFailureMessageWithResponse:responseObject]];
+    
 }
 
 -(void)requestSuccess:(void (^)(id))success failure:(void (^)(id))failure{

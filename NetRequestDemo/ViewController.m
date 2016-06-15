@@ -49,10 +49,13 @@
             
             dispatch_async(dispatch_get_main_queue(), ^{
             
-                [[NetTest test] requestSuccess:^(id JSON) {
+                [[[NetTest test] requestNeedShowLoading] requestSuccess:^(id JSON) {
                     
                     dispatch_semaphore_signal(semap);
-                    
+                    NSLog(@"success - %@",JSON);
+                } failure:^(id JSON) {
+                    dispatch_semaphore_signal(semap);
+                    NSLog(@"fail -%@",JSON);
                 }];
                 
             });

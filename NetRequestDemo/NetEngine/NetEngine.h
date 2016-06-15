@@ -160,7 +160,7 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 /**
  *  配置 NetRequestConfig
  */
--(void)requestWithConfig:(id<NetRequestConfig>)config;
+-(id)requestWithConfig:(id<NetRequestConfig>)config;
 
 #pragma mark - 请求提醒配置
 /**
@@ -171,7 +171,7 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 /**
  *  配置定制 NetTipsConfig
  */
--(void)requestWithTipsConfig:(id<NetTipsConfig>)tipsConfig;
+-(id)requestWithTipsConfig:(id<NetTipsConfig>)tipsConfig;
 
 /**
  *  加载时需要显示动画
@@ -186,7 +186,7 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 /**
  *  请求回调
  */
-@property (nonatomic, assign) id<NetEngineDelegate> delegate;
+@property (nonatomic, weak) id<NetEngineDelegate> delegate;
 
 #pragma mark - 请求内容
 /**
