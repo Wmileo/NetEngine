@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.version      = "0.0.10"
   s.summary      = "NetEngine : 网络请求封装"
   s.description  = <<-DESC
-					 网络请求封装
+					 针对AFNetworking进行了封装，判断请求返回成功失败，显示对应状态
                    DESC
 
   s.homepage     = "https://github.com/Wmileo/NetEngine"
