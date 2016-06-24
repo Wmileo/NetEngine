@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "NetEngine"
-  s.version      = "0.0.10"
+  s.version      = "0.0.11"
   s.summary      = "NetEngine : 网络请求封装"
   s.description  = <<-DESC
 					 针对AFNetworking进行了封装，判断请求返回成功失败，显示对应状态
@@ -16,6 +16,9 @@ Pod::Spec.new do |s|
   #s.exclude_files = "Classes/Exclude"
   s.requires_arc = true
 
+  s.frameworks   = 'CoreTelephony'
+
   s.dependency 'AFNetworking', '~> 3.0.4'
+
 
 end
