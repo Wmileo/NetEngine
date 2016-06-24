@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "NetTest.h"
+#import "NetStatus.h"
 
 @interface ViewController ()
 
@@ -20,19 +21,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(50, 50, 50, 50)];
     [self.view addSubview:button];
     [button addTarget:self action:@selector(click) forControlEvents:UIControlEventTouchUpInside];
     button.backgroundColor = [UIColor yellowColor];
     button.titleLabel.text = @"点我";
     
-    
     UIButton *haha = [[UIButton alloc] initWithFrame:CGRectMake(150, 50, 50, 50)];
     [self.view addSubview:haha];
     [haha addTarget:self action:@selector(haha) forControlEvents:UIControlEventTouchUpInside];
     haha.backgroundColor = [UIColor blueColor];
     haha.titleLabel.text = @"点我";
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(haha) name:NetStatusDidChanged object:nil];
     
     // Do any additional setup after loading the view, typically from a nib.
 }
@@ -69,7 +70,7 @@
 }
 
 -(void)haha{
-    NSLog(@"haha");
+    NSLog(@"haha---%@  --wifi:%@  ---wwan:%@",[NetStatus sharedInstance].currentNetworkStatusDescribe,[NetStatus sharedInstance].wifiIPAddress,[NetStatus sharedInstance].WWANIPAddress);
 }
 
 - (void)didReceiveMemoryWarning {
