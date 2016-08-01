@@ -27,7 +27,6 @@
 @property (nonatomic, assign) BOOL needShowErrorTips;
 @property (nonatomic, assign) BOOL needShowSuccessTips;
 @property (nonatomic, assign) BOOL isQuiet;
-@property (nonatomic, assign) BOOL isJson;
 
 #pragma mark - callback
 @property (nonatomic, copy) void (^Success)(id json);
@@ -47,8 +46,6 @@
 {
     self = [super init];
     if (self) {
-        
-        self.isJson = YES;
         
         if (__tipsConfig) {
             [self requestWithTipsConfig:__tipsConfig];
@@ -118,11 +115,6 @@ static id<NetTipsConfig> __tipsConfig;
 
 -(id)requestQuiet{
     self.isQuiet = YES;
-    return self;
-}
-
--(id)requestNoJson{
-    self.isJson = NO;
     return self;
 }
 
@@ -205,33 +197,34 @@ static id<NetTipsConfig> __tipsConfig;
         [self.delegate requestDidSuccess];
     }
     
-    if (!self.isJson) {
+    NSString *response = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[response dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
+    
+    if (!json) {
 //        NSLog(@"\nsuccess------------------\n%@ \n---------------",task.currentRequest);
-
-        NSString *resp = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-        if (self.Success) self.Success(resp);
-        if (self.needShowSuccessTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:resp type:RESPONSE_TIPS_SUCCESS];
+        if (self.Success) self.Success(response);
+        if (self.needShowSuccessTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:response type:RESPONSE_TIPS_SUCCESS];
 
     }else{
         
-        NSString *tips = responseObject ? [self.config requestMessageWithResponse:responseObject] : nil;
+        NSString *tips = json ? [self.config requestMessageWithResponse:json] : nil;
         
-        if ([self.config requestIsSuccessWithResponse:responseObject]) {
+        if ([self.config requestIsSuccessWithResponse:json]) {
 //        NSLog(@"\nsuccess------------------\n%@ \n---------------",task.currentRequest);
-            if (self.Success) self.Success(responseObject);
+            if (self.Success) self.Success(json);
             if (self.needShowSuccessTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:tips type:RESPONSE_TIPS_SUCCESS];
             
         }else{
             
             NSLog(@"\nmistake------------------\n%@ \n---------------\n%@\n----------------%@",
-                  responseObject,
+                  json,
                   task.currentRequest,
                   tips);
             
-            [self.config requestHandleWithErrorCodeWithResponse:responseObject];
+            [self.config requestHandleWithErrorCodeWithResponse:json];
             
-            if (self.Mistake) self.Mistake(responseObject);
-            if (self.Failure) self.Failure(responseObject);
+            if (self.Mistake) self.Mistake(json);
+            if (self.Failure) self.Failure(json);
             if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:tips type:RESPONSE_TIPS_FAIL];
         }
     }

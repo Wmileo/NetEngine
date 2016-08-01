@@ -190,11 +190,6 @@ typedef NS_ENUM(NSInteger, RESPONSE_TIPS_TYPE){
 -(id)requestQuiet;
 
 /**
- *  请求返回非json
- */
--(id)requestNoJson;
-
-/**
  *  请求成功时显示成功提示
  */
 -(id)requestNeedShowSuccessTips;

@@ -23,7 +23,7 @@
 }
 
 +(NetTest *)test{
-    return [__SELF requestFullPath:@"http://101.201.102.76:8080/ubt/pv?accessTime=1470037427596&app=cz&data%5Bios%5D%5Bversion%5D=4.2.2&leaveTime=1470037433717&prePVID=&pvid=ios-4.2.2-%E9%A6%96%E9%A1%B5&ubt_client_type=ios&ubt_client_version=1.0.0&uid=245563" withFullParams:nil type:REQUEST_POST];
+    return [__SELF requestFullPath:@"http://app1.ichezheng.com/CarcareService/travels/gettravelsbyday?imei=866717027538471&userid=385006&dayTime=2016-07-16&session=592348b09aa3420894013a256767ec9f" withFullParams:nil type:REQUEST_POST];
 }
 
 -(NSString *)requestMainURL{

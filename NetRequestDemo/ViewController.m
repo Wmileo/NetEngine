@@ -50,7 +50,7 @@
             
             dispatch_async(dispatch_get_main_queue(), ^{
             
-                [[[[NetTest test] requestNeedShowLoading] requestNoJson] requestSuccess:^(id JSON) {
+                [[[NetTest test] requestNeedShowLoading] requestSuccess:^(id JSON) {
                     
                     dispatch_semaphore_signal(semap);
                     NSLog(@"success - %@",JSON);
