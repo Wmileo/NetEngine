@@ -27,6 +27,13 @@
 @property (nonatomic, assign) BOOL needShowErrorTips;
 @property (nonatomic, assign) BOOL needShowSuccessTips;
 @property (nonatomic, assign) BOOL isQuiet;
+@property (nonatomic, assign) BOOL isJson;
+
+#pragma mark - callback
+@property (nonatomic, copy) void (^Success)(id json);
+@property (nonatomic, copy) void (^Failure)(id json);
+@property (nonatomic, copy) void (^Mistake)(id json);
+@property (nonatomic, copy) void (^FailLink)(id json);
 
 @end
 
@@ -40,6 +47,8 @@
 {
     self = [super init];
     if (self) {
+        
+        self.isJson = YES;
         
         if (__tipsConfig) {
             [self requestWithTipsConfig:__tipsConfig];
@@ -112,6 +121,11 @@ static id<NetTipsConfig> __tipsConfig;
     return self;
 }
 
+-(id)requestNoJson{
+    self.isJson = NO;
+    return self;
+}
+
 #pragma mark - 请求内容
 -(id)request:(NSString *)path withParams:(NSDictionary *)params type:(REQUEST_TYPE)type{
     self.path = [NSString stringWithFormat:@"%@%@",[self.config requestMainURL],path];
@@ -135,6 +149,11 @@ static id<NetTipsConfig> __tipsConfig;
 #pragma mark - 发起请求
 -(void)requestSuccess:(void (^)(id))success failure:(void (^)(id))failure failMistake:(void (^)(id))mistake failLink:(void (^)(id))link{
     
+    self.Success = success;
+    self.Failure = failure;
+    self.Mistake = mistake;
+    self.FailLink = link;
+    
     if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
     if ([self.delegate respondsToSelector:@selector(requestWillStart)]) {
@@ -149,10 +168,10 @@ static id<NetTipsConfig> __tipsConfig;
         case REQUEST_GET:
         {
             [self.httpManager GET:self.path parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                [self requestSuccessTask:task responseObject:responseObject success:success failure:failure failMistake:mistake];
+                [self requestSuccessTask:task responseObject:responseObject];
                 [self releaseConfig];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [self requestFailureTask:task error:error failure:failure failLink:link];
+                [self requestFailureTask:task error:error];
                 [self releaseConfig];
             }];
         }
@@ -160,25 +179,14 @@ static id<NetTipsConfig> __tipsConfig;
         case REQUEST_POST:
         {
             [self.httpManager POST:self.path parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                [self requestSuccessTask:task responseObject:responseObject success:success failure:failure failMistake:mistake];
+                [self requestSuccessTask:task responseObject:responseObject];
                 [self releaseConfig];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [self requestFailureTask:task error:error failure:failure failLink:link];
+                [self requestFailureTask:task error:error];
                 [self releaseConfig];
             }];
         }
             break;
-            
-        case REQUEST_HEAD:
-        {
-            [self.httpManager HEAD:self.path parameters:params success:^(NSURLSessionDataTask * _Nonnull task) {
-                [self requestSuccessTask:task responseObject:nil success:success failure:failure failMistake:mistake];
-                [self releaseConfig];
-            } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [self requestFailureTask:task error:error failure:failure failLink:link];
-                [self releaseConfig];
-            }];
-        }
             
         default:
             if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
@@ -188,40 +196,49 @@ static id<NetTipsConfig> __tipsConfig;
     }
 }
 
--(void)requestSuccessTask:(NSURLSessionDataTask *)task responseObject:(id)responseObject success:(void(^)(id JSON))success failure:(void (^)(id))failure failMistake:(void (^)(id))mistake{
+-(void)requestSuccessTask:(NSURLSessionDataTask *)task responseObject:(id)responseObject{
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
     if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-    
     
     if ([self.delegate respondsToSelector:@selector(requestDidSuccess)]) {
         [self.delegate requestDidSuccess];
     }
     
-    NSString *tips = responseObject ? [self.config requestMessageWithResponse:responseObject] : nil;
-
-    if ([self.config requestIsSuccessWithResponse:responseObject] || self.type == REQUEST_HEAD) {
+    if (!self.isJson) {
 //        NSLog(@"\nsuccess------------------\n%@ \n---------------",task.currentRequest);
-        if (success) success(responseObject);
-        if (self.needShowSuccessTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:tips type:RESPONSE_TIPS_SUCCESS];
-        
+
+        NSString *resp = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+        if (self.Success) self.Success(resp);
+        if (self.needShowSuccessTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:resp type:RESPONSE_TIPS_SUCCESS];
+
     }else{
         
-        NSLog(@"\nmistake------------------\n%@ \n---------------\n%@\n----------------%@",
-              responseObject,
-              task.currentRequest,
-              tips);
+        NSString *tips = responseObject ? [self.config requestMessageWithResponse:responseObject] : nil;
         
-        [self.config requestHandleWithErrorCodeWithResponse:responseObject];
-        
-        if (mistake) mistake(responseObject);
-        if (failure) failure(responseObject);
-        if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:tips type:RESPONSE_TIPS_FAIL];
+        if ([self.config requestIsSuccessWithResponse:responseObject]) {
+//        NSLog(@"\nsuccess------------------\n%@ \n---------------",task.currentRequest);
+            if (self.Success) self.Success(responseObject);
+            if (self.needShowSuccessTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:tips type:RESPONSE_TIPS_SUCCESS];
+            
+        }else{
+            
+            NSLog(@"\nmistake------------------\n%@ \n---------------\n%@\n----------------%@",
+                  responseObject,
+                  task.currentRequest,
+                  tips);
+            
+            [self.config requestHandleWithErrorCodeWithResponse:responseObject];
+            
+            if (self.Mistake) self.Mistake(responseObject);
+            if (self.Failure) self.Failure(responseObject);
+            if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:tips type:RESPONSE_TIPS_FAIL];
+        }
     }
     
 }
 
--(void)requestFailureTask:(NSURLSessionDataTask *)task error:(NSError *)error failure:(void (^)(id))failure failLink:(void (^)(id))link{
+-(void)requestFailureTask:(NSURLSessionDataTask *)task error:(NSError *)error{
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
     if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
@@ -234,8 +251,8 @@ static id<NetTipsConfig> __tipsConfig;
     
     NSDictionary *responseObject = [self.config requestLinkErrorMessageWithError:error response:task.response];
     
-    if (link) link(responseObject);
-    if (failure) failure(responseObject);
+    if (self.FailLink) self.FailLink(responseObject);
+    if (self.Failure) self.Failure(responseObject);
     
     if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:[self.config requestMessageWithResponse:responseObject] type:RESPONSE_TIPS_LINK_FAIL];
     
@@ -258,6 +275,8 @@ static id<NetTipsConfig> __tipsConfig;
 -(AFHTTPSessionManager *)httpManager{
     if (!_httpManager) {
         _httpManager = [[AFHTTPSessionManager alloc] init];
+        _httpManager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        _httpManager.responseSerializer = [AFHTTPResponseSerializer serializer];
         _httpManager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html",@"text/plain", nil];
         _httpManager.requestSerializer.timeoutInterval = __timeInterval == 0 ? 15 : __timeInterval;
     }
