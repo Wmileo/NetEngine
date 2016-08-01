@@ -16,7 +16,6 @@
 
 -(void)dealloc{
 
-
 }
 
 -(id<NetRequestConfig>)requestDefaultConfig{
@@ -24,7 +23,7 @@
 }
 
 +(NetTest *)test{
-    return [__SELF request:@"/test/res" withParams:@{@"c":@"d"} type:REQUEST_POST];
+    return [__SELF requestFullPath:@"http://app1.ichezheng.com/CarcareService/Viol5ation/eclicksCityList?userid=58064&session=64510d0f53a4465d9099ced1829eb18f" withFullParams:nil type:REQUEST_HEAD];
 }
 
 -(NSString *)requestMainURL{

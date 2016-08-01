@@ -10,7 +10,8 @@
 
 typedef NS_ENUM(NSInteger, REQUEST_TYPE){
     REQUEST_POST,//post请求
-    REQUEST_GET//get请求
+    REQUEST_GET,//get请求
+    REQUEST_HEAD//get请求
 };
 
 typedef NS_ENUM(NSInteger, RESPONSE_TIPS_TYPE){
@@ -183,6 +184,11 @@ typedef NS_ENUM(NSInteger, RESPONSE_TIPS_TYPE){
  *  加载时需要显示动画
  */
 -(id)requestNeedShowLoading;
+
+/**
+ *  安静的请求（去掉状态栏的loading）
+ */
+-(id)requestQuiet;
 
 /**
  *  请求成功时显示成功提示
