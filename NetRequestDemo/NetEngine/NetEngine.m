@@ -270,7 +270,7 @@ static id<NetTipsConfig> __tipsConfig;
         _httpManager = [[AFHTTPSessionManager alloc] init];
         _httpManager.requestSerializer = [AFHTTPRequestSerializer serializer];
         _httpManager.responseSerializer = [AFHTTPResponseSerializer serializer];
-        _httpManager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html",@"text/plain", nil];
+        _httpManager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/html",@"text/plain", nil];
         _httpManager.requestSerializer.timeoutInterval = __timeInterval == 0 ? 15 : __timeInterval;
     }
     return _httpManager;
