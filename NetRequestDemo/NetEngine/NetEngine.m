@@ -197,11 +197,11 @@ static id<NetTipsConfig> __tipsConfig;
         [self.delegate requestDidSuccess];
     }
     
-    NSString *response = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[response dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
     
     if (!json) {
 //        NSLog(@"\nsuccess------------------\n%@ \n---------------",task.currentRequest);
+        NSString *response = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
         if (self.Success) self.Success(response);
         if (self.needShowSuccessTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:response type:RESPONSE_TIPS_SUCCESS];
 
@@ -248,7 +248,7 @@ static id<NetTipsConfig> __tipsConfig;
     if (self.Failure) self.Failure(responseObject);
     
     if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:[self.config requestMessageWithResponse:responseObject] type:RESPONSE_TIPS_LINK_FAIL];
-    
+
 }
 
 -(void)requestSuccess:(void (^)(id))success failure:(void (^)(id))failure{
