@@ -19,6 +19,14 @@ typedef NS_ENUM(NSInteger, RESPONSE_TIPS_TYPE){
     RESPONSE_TIPS_LINK_FAIL//请求失败
 };
 
+typedef NS_ENUM(NSInteger, RequestLoad){
+    RequestLoadNone            = 0,       //默认显示状态栏加载
+    RequestLoadShowLoading     = 1 << 0,  //显示加载动画
+    RequestLoadShowErrorTips   = 1 << 1,  //显示错误提示
+    RequestLoadShowSuccessTips = 1 << 2,  //显示成功提示
+    RequestLoadNoStatusLoading = 1 << 3   //不显示状态栏加载
+};
+
 #define __SELF [[[self class] alloc] init]
 
 /**
@@ -180,24 +188,9 @@ typedef NS_ENUM(NSInteger, RESPONSE_TIPS_TYPE){
 -(id)requestWithTipsConfig:(id<NetTipsConfig>)tipsConfig;
 
 /**
- *  加载时需要显示动画
+ *  配置加载过程
  */
--(id)requestNeedShowLoading;
-
-/**
- *  安静的请求（去掉状态栏的loading）
- */
--(id)requestQuiet;
-
-/**
- *  请求成功时显示成功提示
- */
--(id)requestNeedShowSuccessTips;
-
-/**
- *  发生错误时需要显示错误提示
- */
--(id)requestNeedShowErrorTips;
+-(id)requestWithLoad:(RequestLoad)load;
 
 /**
  *  请求回调

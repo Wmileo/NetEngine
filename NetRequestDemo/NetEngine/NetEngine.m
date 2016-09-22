@@ -38,10 +38,6 @@
 
 @implementation NetEngine
 
--(void)dealloc{
-    
-}
-
 - (instancetype)init
 {
     self = [super init];
@@ -98,23 +94,11 @@ static id<NetTipsConfig> __tipsConfig;
     return self;
 }
 
--(id)requestNeedShowLoading{
-    self.needShowLoading = YES;
-    return self;
-}
-
--(id)requestNeedShowErrorTips{
-    self.needShowErrorTips = YES;
-    return self;
-}
-
--(id)requestNeedShowSuccessTips{
-    self.needShowSuccessTips = YES;
-    return self;
-}
-
--(id)requestQuiet{
-    self.isQuiet = YES;
+-(id)requestWithLoad:(RequestLoad)load{
+    self.needShowLoading = (load & RequestLoadShowLoading) == RequestLoadShowLoading;
+    self.needShowErrorTips = (load & RequestLoadShowErrorTips) == RequestLoadShowErrorTips;
+    self.needShowSuccessTips = (load & RequestLoadShowSuccessTips) == RequestLoadShowSuccessTips;
+    self.isQuiet = (load & RequestLoadNoStatusLoading) == RequestLoadNoStatusLoading;
     return self;
 }
 
@@ -186,6 +170,7 @@ static id<NetTipsConfig> __tipsConfig;
 
             break;
     }
+    
 }
 
 -(void)requestSuccessTask:(NSURLSessionDataTask *)task responseObject:(id)responseObject{
