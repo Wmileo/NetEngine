@@ -45,9 +45,9 @@
  *  @param type   请求类型Post，Get
  *
  */
--(id<NetRequest>)requestWithPath:(NSString *)path
-                          params:(NSDictionary *)params
-                            type:(REQUEST_TYPE)type;
+-(id<NetRequest>)configWithPath:(NSString *)path
+                         params:(NSDictionary *)params
+                           type:(REQUEST_TYPE)type;
 
 /**
  *  请求接口及参数
@@ -57,9 +57,9 @@
  *  @param type   请求类型Post，Get
  *
  */
--(id<NetRequest>)requestWithFullPath:(NSString *)path
-                          fullParams:(NSDictionary *)params
-                                type:(REQUEST_TYPE)type;
+-(id<NetRequest>)configWithFullPath:(NSString *)path
+                         fullParams:(NSDictionary *)params
+                               type:(REQUEST_TYPE)type;
 
 
 

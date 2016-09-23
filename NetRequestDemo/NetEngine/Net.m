@@ -25,11 +25,11 @@
 -(id<NetRequest>)configWithLoadShow:(RequestLoad)load{
     return [self requestWithLoad:load];
 }
--(id<NetRequest>)requestWithPath:(NSString *)path params:(NSDictionary *)params type:(REQUEST_TYPE)type{
+-(id<NetRequest>)configWithPath:(NSString *)path params:(NSDictionary *)params type:(REQUEST_TYPE)type{
     return [self request:path withParams:params type:type];
 }
 
--(id<NetRequest>)requestWithFullPath:(NSString *)path fullParams:(NSDictionary *)params type:(REQUEST_TYPE)type{
+-(id<NetRequest>)configWithFullPath:(NSString *)path fullParams:(NSDictionary *)params type:(REQUEST_TYPE)type{
     return [self requestFullPath:path withFullParams:params type:type];
 }
 
