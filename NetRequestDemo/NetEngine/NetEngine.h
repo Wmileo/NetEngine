@@ -74,6 +74,13 @@ typedef NS_ENUM(NSInteger, RequestLoad){
  */
 -(NSDictionary *)finalResponseObjectWithResponse:(NSDictionary *)response;
 
+
+/**
+ *  对请求参数进行处理
+ */
+-(NSDictionary *)finalRequestObjectWithRequest:(NSDictionary *)request;
+
+
 @end
 
 

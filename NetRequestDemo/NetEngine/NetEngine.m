@@ -138,7 +138,12 @@ static id<NetTipsConfig> __tipsConfig;
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(showLoading)]) [self.tipsConfig showLoading];
     
-    NSDictionary *params = [self respondsToSelector:@selector(requestFinalParamsWithSplicedParams:)] ? [self requestFinalParamsWithSplicedParams:self.params] : self.params;
+    NSDictionary *params = self.params;
+    if ([self respondsToSelector:@selector(requestFinalParamsWithSplicedParams:)]) {
+        params = [self requestFinalParamsWithSplicedParams:self.params];
+    }else if ([self.config respondsToSelector:@selector(finalRequestObjectWithRequest:)]){
+        params = [self.config finalRequestObjectWithRequest:self.params];
+    }
     
     switch (self.type) {
         case REQUEST_GET:
