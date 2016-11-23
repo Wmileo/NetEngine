@@ -23,11 +23,11 @@
 }
 
 +(NetTest *)test{
-    return [__SELF requestFullPath:@"http://app1.ichezheng.com/CarcareService/travels/gettravelsbyday?imei=866717027538471&userid=385006&dayTime=2016-07-16&session=592348b09aa3420894013a256767ec9f" withFullParams:nil type:REQUEST_POST];
+    return [__SELF request:@"/login/hello" withParams:@{} type:REQUEST_POST];
 }
 
 -(NSString *)requestMainURL{
-    return @"http://115.159.49.124:8080/CarcareService";
+    return @"http://10.10.13.6:8080/qianbao3.0/";
 }
 
 -(NSDictionary *)requestCommonParams{
@@ -51,7 +51,7 @@
 }
 
 -(NSDictionary *)requestFinalParamsWithSplicedParams:(NSDictionary *)spliced{
-    return @{@"hh":@"mm"};
+    return @{@"data":@"yitbDd0xAj76KPdmQhDPTQ=="};
 }
 
 
@@ -65,6 +65,15 @@
 
 -(void)requestDidSuccess{
     NSLog(@"requestDidSuccess");
+}
+
+-(NSDictionary *)finalResponseObjectWithResponse:(NSDictionary *)response{
+    return @{};
+}
+
+-(void)configAFHTTPSessionManager:(AFHTTPSessionManager *)httpManager{
+    httpManager.requestSerializer = [AFJSONRequestSerializer serializer];
+    [httpManager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
 }
 
 @end

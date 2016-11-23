@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "AFHTTPSessionManager.h"
+
 
 typedef NS_ENUM(NSInteger, REQUEST_TYPE){
     REQUEST_POST,//post请求
@@ -60,6 +62,17 @@ typedef NS_ENUM(NSInteger, RequestLoad){
  *  链接错误信息
  */
 -(NSDictionary *)requestLinkErrorMessageWithError:(NSError *)error response:(NSURLResponse *)response;
+
+@optional
+/**
+ *  对AFHTTPSessionManager进行配置
+ */
+-(void)configAFHTTPSessionManager:(AFHTTPSessionManager *)httpManager;
+
+/**
+ *  对返回数据进行处理
+ */
+-(NSDictionary *)finalResponseObjectWithResponse:(NSDictionary *)response;
 
 @end
 

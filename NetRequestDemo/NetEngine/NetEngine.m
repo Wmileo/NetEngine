@@ -184,6 +184,10 @@ static id<NetTipsConfig> __tipsConfig;
     
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
     
+    if ([self.config respondsToSelector:@selector(finalResponseObjectWithResponse:)]) {
+        json = [self.config finalResponseObjectWithResponse:json];
+    }
+    
     if (!json) {
 //        NSLog(@"\nsuccess------------------\n%@ \n---------------",task.currentRequest);
         NSString *response = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
@@ -257,6 +261,9 @@ static id<NetTipsConfig> __tipsConfig;
         _httpManager.responseSerializer = [AFHTTPResponseSerializer serializer];
         _httpManager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/html",@"text/plain", nil];
         _httpManager.requestSerializer.timeoutInterval = __timeInterval == 0 ? 15 : __timeInterval;
+        if ([self.config respondsToSelector:@selector(configAFHTTPSessionManager:)]) {
+            [self.config configAFHTTPSessionManager:_httpManager];
+        }
     }
     return _httpManager;
 }
