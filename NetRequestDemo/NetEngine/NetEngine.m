@@ -123,14 +123,8 @@ static id<NetTipsConfig> __tipsConfig;
 }
 
 #pragma mark - 发起请求
--(void)requestSuccess:(void (^)(id))success failure:(void (^)(id))failure failMistake:(void (^)(id))mistake failLink:(void (^)(id))link{
-    
-    self.Success = success;
-    self.Failure = failure;
-    self.Mistake = mistake;
-    self.FailLink = link;
-    
-    if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+- (void)request {
+  if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
     if ([self.delegate respondsToSelector:@selector(requestWillStart)]) {
         [self.delegate requestWillStart];
@@ -175,7 +169,21 @@ static id<NetTipsConfig> __tipsConfig;
 
             break;
     }
+}
+
+-(void)requestSuccess:(void (^)(id))success failure:(void (^)(id))failure failMistake:(void (^)(id))mistake failLink:(void (^)(id))link{
     
+    self.Success = success;
+    self.Failure = failure;
+    self.Mistake = mistake;
+    self.FailLink = link;
+    
+    [self request];
+    
+}
+
+-(void)reRequest{
+    [self request];
 }
 
 -(void)requestSuccessTask:(NSURLSessionDataTask *)task responseObject:(id)responseObject{

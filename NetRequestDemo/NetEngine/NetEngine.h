@@ -281,6 +281,9 @@ typedef NS_ENUM(NSInteger, RequestLoad){
  */
 -(void)requestOnly;
 
-
+/**
+ *  再次发起请求
+ */
+-(void)reRequest;
 
 @end

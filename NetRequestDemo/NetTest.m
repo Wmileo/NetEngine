@@ -27,7 +27,7 @@
 }
 
 -(NSString *)requestMainURL{
-    return @"http://10.10.13.6:8080/qianbao3.0/";
+    return @"http://s.qianbaocard.com/";
 }
 
 -(NSDictionary *)requestCommonParams{
