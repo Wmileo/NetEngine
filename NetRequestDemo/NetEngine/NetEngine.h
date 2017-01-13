@@ -31,8 +31,10 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 
 #define __SELF [[[self class] alloc] init]
 
+@class NetEngine;
+
 /**
- *  请求配置  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
+ *  请求配置  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
  */
 @protocol NetRequestConfig <NSObject>
 
@@ -40,28 +42,30 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  请求主服务器
  */
--(NSString *)requestMainURL;
+-(NSString *)mainURL;
 
 #pragma mark - 请求返回操作
 /**
  *  判断返回操作是否成功
  */
--(BOOL)requestIsSuccessWithResponse:(id)responseObject;
+-(BOOL)isSuccessWithNetEngine:(NetEngine *)netEngine;
 
 /**
  *  获取返回的信息
  */
--(NSString *)requestMessageWithResponse:(id)responseObject;
+-(NSString *)messageWithNetEngine:(NetEngine *)netEngine;
 
 /**
  *  处理错误码
  */
--(void)requestHandleWithErrorCodeWithResponse:(id)responseObject;
+-(void)handleErrorWithNetEngine:(NetEngine *)netEngine;
 
 /**
  *  链接错误信息
  */
--(NSDictionary *)requestLinkErrorMessageWithError:(NSError *)error response:(NSURLResponse *)response;
+-(NSDictionary *)linkErrorMessageWithNetEngine:(NetEngine *)netEngine;
+
+-(void)responseInfoWithNetEngine:(NetEngine *) fillInfo:()
 
 @optional
 /**
@@ -70,22 +74,20 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 -(void)configAFHTTPSessionManager:(AFHTTPSessionManager *)httpManager;
 
 /**
- *  对返回数据进行处理
+ *  返回业务数据
  */
--(NSDictionary *)finalResponseObjectWithResponse:(NSDictionary *)response;
-
+-(NSDictionary *)responseObjectWithNetEngine:(NetEngine *)netEngine;
 
 /**
  *  对请求参数进行处理
  */
--(NSDictionary *)finalRequestObjectWithRequest:(NSDictionary *)request;
-
+-(NSDictionary *)requestObjectWithNetEngine:(NetEngine *)netEngine;
 
 @end
 
 
 /**
- *  请求过程相关tips操作   －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
+ *  请求过程相关tips操作   －－－－－－－－－－－－－－－－－－－－－－－－－
  */
 @protocol NetTipsConfig <NSObject>
 
@@ -109,7 +111,7 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 @end
 
 /**
- *  请求回调  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
+ *  请求回调  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
  */
 @protocol NetEngineDelegate <NSObject>
 
@@ -118,23 +120,23 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  请求开始时调用
  */
--(void)requestWillStart;
+-(void)requestWillStartWithNetEngine:(NetEngine *)netEngine;
 
 /**
  *  请求成功时调用
  */
--(void)requestDidSuccess;
+-(void)requestDidSuccessWithNetEngine:(NetEngine *)netEngine;
 
 /**
  *  请求失败时调用
  */
--(void)requestDidFailure;
+-(void)requestDidFailureWithNetEngine:(NetEngine *)netEngine;
 
 @end
 
 
 /**
- *  请求默认配置  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
+ *  请求默认配置  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
  */
 @protocol NetEngineDataSource <NSObject>
 
@@ -142,37 +144,24 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  返回默认配置
  */
--(id<NetRequestConfig>)requestDefaultConfig;
+-(id<NetRequestConfig>)defaultConfig;
 
 /**
  *  请求公共参数
  */
--(NSDictionary *)requestCommonParams;
+-(NSDictionary *)commonParams;
 
 /**
  *  对拼接后的参数进行处理得到最终请求参数
  */
--(NSDictionary *)requestFinalParamsWithSplicedParams:(NSDictionary *)spliced;
+-(NSDictionary *)requestFinalParamsWithSplicedParams:(NSDictionary *)spliced netEngine:(NetEngine *)netEngine;
+
+#warning 最终url
 
 
 @end
 
 
-/**  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
- *  推荐写法：
- *
- * 一 ，以服务器为划分类
- *  1，配置公共 NetTipsConfig
- *  2，每个请求服务器均继承该类，并配置NetRequestConfig
- *  3，每个请求服务器类作为父类，子类按业务模块写请求
- *  4，每个请求均是类方法
- *
- * 二 ，以业务为划分类
- *  1，配置公共 NetTipsConfig
- *  2，每个业务网络请求模块子类继承该类，实现NetEngineDataSource
- *  3，每个请求请求均是类方法
- *
- */
 @interface NetEngine : NSObject <NetEngineDataSource>
 
 #pragma mark - 请求配置

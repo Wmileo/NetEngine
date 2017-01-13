@@ -237,7 +237,7 @@ static id<NetTipsConfig> __tipsConfig;
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
     if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
- 
+
     if ([self.delegate respondsToSelector:@selector(requestDidFailure)]) {
         [self.delegate requestDidFailure];
     }

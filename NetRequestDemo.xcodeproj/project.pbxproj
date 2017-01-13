@@ -18,6 +18,7 @@
 		7EC916121CA907CA00B25B50 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7EC916101CA907CA00B25B50 /* LaunchScreen.storyboard */; };
 		7EC9161D1CA907CB00B25B50 /* NetRequestDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC9161C1CA907CB00B25B50 /* NetRequestDemoTests.m */; };
 		7EC9162A1CA90F2000B25B50 /* NetEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC916291CA90F2000B25B50 /* NetEngine.m */; };
+		B376A0241E2886220094EFB4 /* NetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B376A0231E2886220094EFB4 /* NetModel.m */; };
 		CE1F17AC1D92A768002AC0C9 /* Net.m in Sources */ = {isa = PBXBuildFile; fileRef = CE1F17AB1D92A768002AC0C9 /* Net.m */; };
 		CE7CD94B1DE55033004FE86E /* NetEngine.podspec in Resources */ = {isa = PBXBuildFile; fileRef = CE7CD94A1DE55033004FE86E /* NetEngine.podspec */; };
 		CEFD94BB1D1BCBC8002BFD5B /* NetStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = CEFD94BA1D1BCBC8002BFD5B /* NetStatus.m */; };
@@ -55,6 +56,8 @@
 		7EC9161E1CA907CB00B25B50 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7EC916281CA90F2000B25B50 /* NetEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetEngine.h; sourceTree = "<group>"; };
 		7EC916291CA90F2000B25B50 /* NetEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetEngine.m; sourceTree = "<group>"; };
+		B376A0221E2886220094EFB4 /* NetModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetModel.h; sourceTree = "<group>"; };
+		B376A0231E2886220094EFB4 /* NetModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetModel.m; sourceTree = "<group>"; };
 		CD769730EC39C3ECE532B52A /* Pods-NetRequestDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NetRequestDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NetRequestDemo/Pods-NetRequestDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		CE1F17AA1D92A768002AC0C9 /* Net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Net.h; sourceTree = "<group>"; };
 		CE1F17AB1D92A768002AC0C9 /* Net.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Net.m; sourceTree = "<group>"; };
@@ -158,6 +161,8 @@
 			children = (
 				7EC916281CA90F2000B25B50 /* NetEngine.h */,
 				7EC916291CA90F2000B25B50 /* NetEngine.m */,
+				B376A0221E2886220094EFB4 /* NetModel.h */,
+				B376A0231E2886220094EFB4 /* NetModel.m */,
 				CE1F17AA1D92A768002AC0C9 /* Net.h */,
 				CE1F17AB1D92A768002AC0C9 /* Net.m */,
 				CEFD94B91D1BCBC8002BFD5B /* NetStatus.h */,
@@ -329,6 +334,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7EC9160A1CA907CA00B25B50 /* ViewController.m in Sources */,
+				B376A0241E2886220094EFB4 /* NetModel.m in Sources */,
 				7E9A70E61CB4F43B008BFCBE /* NetTipsConfig.m in Sources */,
 				7EC916071CA907CA00B25B50 /* AppDelegate.m in Sources */,
 				7EC916041CA907CA00B25B50 /* main.m in Sources */,
