@@ -8,6 +8,11 @@
 
 #import "NetModel.h"
 
-@implementation NetModel
+@implementation NetResponseModel
+
+@end
+
+
+@implementation NetRequestModel
 
 @end

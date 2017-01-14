@@ -8,18 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "AFHTTPSessionManager.h"
-
-
-typedef NS_ENUM(NSInteger, REQUEST_TYPE){
-    REQUEST_POST,//post请求
-    REQUEST_GET,//get请求
-};
-
-typedef NS_ENUM(NSInteger, RESPONSE_TIPS_TYPE){
-    RESPONSE_TIPS_SUCCESS,//返回成功
-    RESPONSE_TIPS_FAIL,//返回失败
-    RESPONSE_TIPS_LINK_FAIL//请求失败
-};
+#import "NetModel.h"
 
 typedef NS_ENUM(NSInteger, RequestLoad){
     RequestLoadNone            = 0,       //默认显示状态栏加载
@@ -36,52 +25,20 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  请求配置  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
  */
-@protocol NetRequestConfig <NSObject>
+@protocol NetConfig <NSObject>
 
 @required
-/**
- *  请求主服务器
- */
--(NSString *)mainURL;
-
-#pragma mark - 请求返回操作
-/**
- *  判断返回操作是否成功
- */
--(BOOL)isSuccessWithNetEngine:(NetEngine *)netEngine;
 
 /**
- *  获取返回的信息
+ *  返回数据处理
  */
--(NSString *)messageWithNetEngine:(NetEngine *)netEngine;
-
-/**
- *  处理错误码
- */
--(void)handleErrorWithNetEngine:(NetEngine *)netEngine;
-
-/**
- *  链接错误信息
- */
--(NSDictionary *)linkErrorMessageWithNetEngine:(NetEngine *)netEngine;
-
--(void)responseInfoWithNetEngine:(NetEngine *) fillInfo:()
+-(void)responseInfoWithNetEngine:(NetEngine *)engine fillInfo:(NetResponseModel *(^)())info;
 
 @optional
 /**
- *  对AFHTTPSessionManager进行配置
+ *  请求数据处理
  */
--(void)configAFHTTPSessionManager:(AFHTTPSessionManager *)httpManager;
-
-/**
- *  返回业务数据
- */
--(NSDictionary *)responseObjectWithNetEngine:(NetEngine *)netEngine;
-
-/**
- *  对请求参数进行处理
- */
--(NSDictionary *)requestObjectWithNetEngine:(NetEngine *)netEngine;
+-(void)requestInfoWithNetEngine:(NetEngine *)engine fillInfo:(NetRequestModel *(^)())info;
 
 @end
 
@@ -106,7 +63,7 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  显示提示信息，没实现的话就没有任何提示
  */
--(void)showTips:(NSString *)tips type:(RESPONSE_TIPS_TYPE)type;
+-(void)showTips:(NSString *)tips netEngine:(NetEngine *)engine;
 
 @end
 
@@ -120,49 +77,26 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  请求开始时调用
  */
--(void)requestWillStartWithNetEngine:(NetEngine *)netEngine;
+-(void)requestWillStartWithNetEngine:(NetEngine *)engine;
 
 /**
  *  请求成功时调用
  */
--(void)requestDidSuccessWithNetEngine:(NetEngine *)netEngine;
+-(void)requestDidSuccessWithNetEngine:(NetEngine *)engine;
 
 /**
  *  请求失败时调用
  */
--(void)requestDidFailureWithNetEngine:(NetEngine *)netEngine;
+-(void)requestDidFailureWithNetEngine:(NetEngine *)engine;
 
 @end
 
+@interface NetEngine : NSObject
 
-/**
- *  请求默认配置  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
- */
-@protocol NetEngineDataSource <NSObject>
+@property (nonatomic, strong) NetResponseModel *responseModel;
+@property (nonatomic, strong) NetRequestModel *requestModel;
 
-@optional
-/**
- *  返回默认配置
- */
--(id<NetRequestConfig>)defaultConfig;
-
-/**
- *  请求公共参数
- */
--(NSDictionary *)commonParams;
-
-/**
- *  对拼接后的参数进行处理得到最终请求参数
- */
--(NSDictionary *)requestFinalParamsWithSplicedParams:(NSDictionary *)spliced netEngine:(NetEngine *)netEngine;
-
-#warning 最终url
-
-
-@end
-
-
-@interface NetEngine : NSObject <NetEngineDataSource>
+@property (nonatomic, strong) AFHTTPSessionManager *httpManager;
 
 #pragma mark - 请求配置
 /**
@@ -173,97 +107,55 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  设置超时时间
  */
--(id)requestTimeoutInterval:(NSTimeInterval)timeInterval;
+-(id)resetTimeout:(NSTimeInterval)timeInterval;
 
 /**
  *  配置全局 NetRequestConfig
  */
-+(void)setupDefaultConfig:(id<NetRequestConfig>)config;
++(void)setupConfig:(id<NetConfig>)config;
 
 /**
  *  配置 NetRequestConfig
  */
--(id)requestWithConfig:(id<NetRequestConfig>)config;
+-(id)resetConfig:(id<NetConfig>)config;
 
 #pragma mark - 请求提醒配置
 /**
  *  配置全局 NetTipsConfig
  */
-+(void)setupDefaultTipsConfig:(id<NetTipsConfig>)tipsConfig;
++(void)setupTipsConfig:(id<NetTipsConfig>)tipsConfig;
 
 /**
  *  配置定制 NetTipsConfig
  */
--(id)requestWithTipsConfig:(id<NetTipsConfig>)tipsConfig;
+-(id)resetTipsConfig:(id<NetTipsConfig>)tipsConfig;
 
 /**
  *  配置加载过程
  */
--(id)requestWithLoad:(RequestLoad)load;
+-(id)setLoadMode:(RequestLoad)mode;
 
 /**
  *  请求回调
  */
-@property (nonatomic, weak) id<NetEngineDelegate> delegate;
+-(id)setNetDelegate:(id<NetEngineDelegate>)delegate;
 
 #pragma mark - 请求内容
 /**
- *  请求接口及参数
  *
- *  @param path   请求路径
- *  @param params 请求参数
- *  @param type   请求类型Post，Get
+ * 给requestModel初始化赋值
  *
  */
--(id)request:(NSString *)path
-  withParams:(NSDictionary *)params
-        type:(REQUEST_TYPE)type;
-
-/**
- *  请求接口及参数
- *
- *  @param path   完整请求路径
- *  @param params 完整请求参数
- *  @param type   请求类型Post，Get
- *
- */
--(id)requestFullPath:(NSString *)path
-      withFullParams:(NSDictionary *)params
-                type:(REQUEST_TYPE)type;
-
+-(id)requestPath:(NSString *)path
+      withParams:(NSDictionary *)params
+            type:(REQUEST_TYPE)type;
 
 
 #pragma mark - 发起请求
 /**
- *  基础
- *
- *  @param success  成功
- *  @param failure  失败（包含所有失败）
- *  @param mistake  由自身参数引起的失败
- *  @param link     由网络或服务器引起的失败
+ *  发送请求
  */
--(void)requestSuccess:(void (^)(id JSON))success
-              failure:(void (^)(id JSON))failure
-          failMistake:(void (^)(id JSON))mistake
-             failLink:(void (^)(id JSON))link;
-
-
-/**
- *  基础 统一处理错误
- *
- *  @param success  成功
- *  @param failure  失败（包含所有失败）
- */
--(void)requestSuccess:(void (^)(id JSON))success
-              failure:(void (^)(id JSON))failure;
-
-
-/**
- *  只处理成功状态
- *
- *  @param success 成功
- */
--(void)requestSuccess:(void (^)(id JSON))success;
+-(void)requestCallBack:(void (^)(NetResponseModel *))callBack;
 
 /**
  *  只发送请求 不处理返回结果

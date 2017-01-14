@@ -11,16 +11,9 @@
 
 @interface NetEngine()
 
-@property (nonatomic, strong) AFHTTPSessionManager *httpManager;
-
-@property (nonatomic, assign) NSTimeInterval timeoutInterval;
-
 #pragma mark - 请求内容
-@property (nonatomic, strong) id<NetRequestConfig> config;
+@property (nonatomic, strong) id<NetConfig> config;
 @property (nonatomic, strong) id<NetTipsConfig> tipsConfig;
-@property (nonatomic, copy) NSString *path;
-@property (nonatomic, assign) REQUEST_TYPE type;
-@property (nonatomic, copy) NSDictionary *params;
 
 #pragma mark - 请求提示
 @property (nonatomic, assign) BOOL needShowLoading;
@@ -29,10 +22,7 @@
 @property (nonatomic, assign) BOOL isQuiet;
 
 #pragma mark - callback
-@property (nonatomic, copy) void (^Success)(id json);
-@property (nonatomic, copy) void (^Failure)(id json);
-@property (nonatomic, copy) void (^Mistake)(id json);
-@property (nonatomic, copy) void (^FailLink)(id json);
+@property (nonatomic, copy) void (^CallBack)(NetResponseModel *model);
 
 @end
 
@@ -42,17 +32,12 @@
 {
     self = [super init];
     if (self) {
-        
         if (__tipsConfig) {
-            [self requestWithTipsConfig:__tipsConfig];
+            [self resetTipsConfig:__tipsConfig];
         }
-        
-        if ([self respondsToSelector:@selector(requestDefaultConfig)]) {
-            [self requestWithConfig:[self performSelector:@selector(requestDefaultConfig)]];
-        }else if (__requestConfig) {
-            [self requestWithConfig:__requestConfig];
+        if (__Config) {
+            [self resetConfig:__Config];
         }
-        
     }
     return self;
 }
@@ -63,62 +48,52 @@
 }
 
 #pragma mark - 请求配置
-static NSTimeInterval __timeInterval;
+NSTimeInterval __timeInterval;
 +(void)setupTimeoutInterval:(NSTimeInterval)timeInterval{
     __timeInterval = timeInterval;
 }
 
--(id)requestTimeoutInterval:(NSTimeInterval)timeInterval{
+-(id)resetTimeout:(NSTimeInterval)timeInterval{
     self.httpManager.requestSerializer.timeoutInterval = timeInterval;
     return self;
 }
 
-static id<NetRequestConfig> __requestConfig;
-+(void)setupDefaultConfig:(id<NetRequestConfig>)config{
-    __requestConfig = config;
+id<NetConfig> __Config;
++(void)setupDefaultConfig:(id<NetConfig>)config{
+    __Config = config;
 }
 
--(id)requestWithConfig:(id<NetRequestConfig>)config{
+-(id)resetConfig:(id<NetConfig>)config{
     self.config = config;
     return self;
 }
 
 #pragma mark - 请求提醒配置
-static id<NetTipsConfig> __tipsConfig;
-+(void)setupDefaultTipsConfig:(id<NetTipsConfig>)tipsConfig{
+id<NetTipsConfig> __tipsConfig;
++(void)setupTipsConfig:(id<NetTipsConfig>)tipsConfig{
     __tipsConfig = tipsConfig;
 }
 
--(id)requestWithTipsConfig:(id<NetTipsConfig>)tipsConfig{
+-(id)resetTipsConfig:(id<NetTipsConfig>)tipsConfig{
     self.tipsConfig = tipsConfig;
     return self;
 }
 
--(id)requestWithLoad:(RequestLoad)load{
-    self.needShowLoading = (load & RequestLoadShowLoading) == RequestLoadShowLoading;
-    self.needShowErrorTips = (load & RequestLoadShowErrorTips) == RequestLoadShowErrorTips;
-    self.needShowSuccessTips = (load & RequestLoadShowSuccessTips) == RequestLoadShowSuccessTips;
-    self.isQuiet = (load & RequestLoadNoStatusLoading) == RequestLoadNoStatusLoading;
+-(id)setLoadMode:(RequestLoad)mode{
+    self.needShowLoading = (mode & RequestLoadShowLoading) == RequestLoadShowLoading;
+    self.needShowErrorTips = (mode & RequestLoadShowErrorTips) == RequestLoadShowErrorTips;
+    self.needShowSuccessTips = (mode & RequestLoadShowSuccessTips) == RequestLoadShowSuccessTips;
+    self.isQuiet = (mode & RequestLoadNoStatusLoading) == RequestLoadNoStatusLoading;
     return self;
 }
 
 #pragma mark - 请求内容
--(id)request:(NSString *)path withParams:(NSDictionary *)params type:(REQUEST_TYPE)type{
-    self.path = [NSString stringWithFormat:@"%@%@",[self.config requestMainURL],path];
-    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:params];
-    if ([self respondsToSelector:@selector(requestCommonParams)]) {
-        [dic addEntriesFromDictionary:[self performSelector:@selector(requestCommonParams)]];
-    }
-    self.params = [dic copy];
-    self.type = type;
-    return self;
-}
 
--(id)requestFullPath:(NSString *)path withFullParams:(NSDictionary *)params type:(REQUEST_TYPE)type{
-    self.config = nil;
-    self.path = path;
-    self.params = params;
-    self.type = type;
+-(id)requestPath:(NSString *)path withParams:(NSDictionary *)params type:(REQUEST_TYPE)type{
+    NetRequestModel *request = [[NetRequestModel alloc] init];
+    request.path = path;
+    request.params = params;
+    request.type = type;
     return self;
 }
 
@@ -171,15 +146,9 @@ static id<NetTipsConfig> __tipsConfig;
     }
 }
 
--(void)requestSuccess:(void (^)(id))success failure:(void (^)(id))failure failMistake:(void (^)(id))mistake failLink:(void (^)(id))link{
-    
-    self.Success = success;
-    self.Failure = failure;
-    self.Mistake = mistake;
-    self.FailLink = link;
-    
+-(void)requestCallBack:(void (^)(NetResponseModel *))callBack{
+    self.CallBack = callBack;
     [self request];
-    
 }
 
 -(void)reRequest{
@@ -253,16 +222,7 @@ static id<NetTipsConfig> __tipsConfig;
 
 }
 
--(void)requestSuccess:(void (^)(id))success failure:(void (^)(id))failure{
-    [self requestSuccess:success failure:failure failMistake:nil failLink:nil];
-}
-
--(void)requestSuccess:(void (^)(id))success{
-    [self requestSuccess:success failure:nil failMistake:nil failLink:nil];
-}
-
 -(void)requestOnly{
-    [self requestSuccess:nil failure:nil failMistake:nil failLink:nil];
 }
 
 
@@ -274,9 +234,6 @@ static id<NetTipsConfig> __tipsConfig;
         _httpManager.responseSerializer = [AFHTTPResponseSerializer serializer];
         _httpManager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/html",@"text/plain", nil];
         _httpManager.requestSerializer.timeoutInterval = __timeInterval == 0 ? 15 : __timeInterval;
-        if ([self.config respondsToSelector:@selector(configAFHTTPSessionManager:)]) {
-            [self.config configAFHTTPSessionManager:_httpManager];
-        }
     }
     return _httpManager;
 }
