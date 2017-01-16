@@ -26,6 +26,9 @@ typedef NS_ENUM(NSInteger, RESPONSE_TYPE){
 @property (nonatomic, strong) NSError *error;
 @property (nonatomic, strong) id responseObject;
 
+@property (nonatomic, readonly) NSInteger statusCode;
+@property (nonatomic, readonly) NSDictionary *allHeaderFields;
+
 @end
 
 typedef NS_ENUM(NSInteger, REQUEST_TYPE){
@@ -38,6 +41,8 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 @property (nonatomic, assign) REQUEST_TYPE type;//请求方法
 @property (nonatomic, copy) NSString *path;//最终请求路径
 @property (nonatomic, copy) NSDictionary *params;//最终请求参数
+
+-(void)addParams:(NSDictionary *)params;
 
 @end
 

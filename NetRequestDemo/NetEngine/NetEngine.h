@@ -32,13 +32,13 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  返回数据处理
  */
--(void)handleResponseInfoWithNetEngine:(id)engine;
+-(void)handleResponseInfoWithNetEngine:(NetEngine *)engine;
 
 @optional
 /**
  *  请求数据处理
  */
--(void)handleRequestInfoWithNetEngine:(id)engine;
+-(void)handleRequestInfoWithNetEngine:(NetEngine *)engine;
 
 @end
 
@@ -63,7 +63,7 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  显示提示信息，没实现的话就没有任何提示
  */
--(void)showTipsWithNetEngine:(id)engine;
+-(void)showTipsWithNetEngine:(NetEngine *)engine;
 
 @end
 
@@ -76,22 +76,22 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  请求数据处理前调用
  */
--(void)requestInfoWillHandleWithEngine:(id)engine;
+-(void)requestInfoWillHandleWithEngine:(NetEngine *)engine;
 
 /**
  *  请求开始时调用
  */
--(void)requestWillStartWithNetEngine:(id)engine;
+-(void)requestWillStartWithNetEngine:(NetEngine *)engine;
 
 /**
  *  请求成功时调用
  */
--(void)requestDidSuccessWithNetEngine:(id)engine;
+-(void)requestDidSuccessWithNetEngine:(NetEngine *)engine;
 
 /**
  *  请求失败时调用
  */
--(void)requestDidFailureWithNetEngine:(id)engine;
+-(void)requestDidFailureWithNetEngine:(NetEngine *)engine;
 
 @end
 
@@ -148,7 +148,7 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  配置callback 发送请求
  */
--(void)requestCallBack:(void (^)(NetResponseModel *))callBack;
+-(void)requestCallBack:(void (^)(NetResponseModel *model))callBack;
 
 /**
  *  发起请求

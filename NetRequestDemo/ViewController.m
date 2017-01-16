@@ -8,7 +8,7 @@
 
 #import "ViewController.h"
 #import "NetStatus.h"
-
+#import "NetQB.h"
 @interface ViewController ()
 
 
@@ -49,7 +49,9 @@
             
             dispatch_async(dispatch_get_main_queue(), ^{
             
-
+                [NetQB testCallBack:^(NetResponseModel *model) {
+                    
+                }];
                 
             });
             

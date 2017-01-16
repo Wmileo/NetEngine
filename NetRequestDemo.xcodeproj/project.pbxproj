@@ -17,6 +17,8 @@
 		7EC9161D1CA907CB00B25B50 /* NetRequestDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC9161C1CA907CB00B25B50 /* NetRequestDemoTests.m */; };
 		7EC9162A1CA90F2000B25B50 /* NetEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC916291CA90F2000B25B50 /* NetEngine.m */; };
 		B376A0241E2886220094EFB4 /* NetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B376A0231E2886220094EFB4 /* NetModel.m */; };
+		B376A0271E2CA8710094EFB4 /* NetQB.m in Sources */ = {isa = PBXBuildFile; fileRef = B376A0261E2CA8710094EFB4 /* NetQB.m */; };
+		B376A02A1E2CAFCC0094EFB4 /* NSString+Encode.m in Sources */ = {isa = PBXBuildFile; fileRef = B376A0291E2CAFCC0094EFB4 /* NSString+Encode.m */; };
 		CE7CD94B1DE55033004FE86E /* NetEngine.podspec in Resources */ = {isa = PBXBuildFile; fileRef = CE7CD94A1DE55033004FE86E /* NetEngine.podspec */; };
 		CEFD94BB1D1BCBC8002BFD5B /* NetStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = CEFD94BA1D1BCBC8002BFD5B /* NetStatus.m */; };
 		CEFD94BD1D1BD9F8002BFD5B /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEFD94BC1D1BD9F8002BFD5B /* CoreTelephony.framework */; };
@@ -51,6 +53,10 @@
 		7EC916291CA90F2000B25B50 /* NetEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetEngine.m; sourceTree = "<group>"; };
 		B376A0221E2886220094EFB4 /* NetModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetModel.h; sourceTree = "<group>"; };
 		B376A0231E2886220094EFB4 /* NetModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetModel.m; sourceTree = "<group>"; };
+		B376A0251E2CA8710094EFB4 /* NetQB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetQB.h; sourceTree = "<group>"; };
+		B376A0261E2CA8710094EFB4 /* NetQB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetQB.m; sourceTree = "<group>"; };
+		B376A0281E2CAFCC0094EFB4 /* NSString+Encode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Encode.h"; sourceTree = "<group>"; };
+		B376A0291E2CAFCC0094EFB4 /* NSString+Encode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Encode.m"; sourceTree = "<group>"; };
 		CD769730EC39C3ECE532B52A /* Pods-NetRequestDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NetRequestDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NetRequestDemo/Pods-NetRequestDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		CE7CD94A1DE55033004FE86E /* NetEngine.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NetEngine.podspec; sourceTree = "<group>"; };
 		CEFD94B91D1BCBC8002BFD5B /* NetStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetStatus.h; sourceTree = "<group>"; };
@@ -116,6 +122,10 @@
 				7EC916061CA907CA00B25B50 /* AppDelegate.m */,
 				7EC916081CA907CA00B25B50 /* ViewController.h */,
 				7EC916091CA907CA00B25B50 /* ViewController.m */,
+				B376A0281E2CAFCC0094EFB4 /* NSString+Encode.h */,
+				B376A0291E2CAFCC0094EFB4 /* NSString+Encode.m */,
+				B376A0251E2CA8710094EFB4 /* NetQB.h */,
+				B376A0261E2CA8710094EFB4 /* NetQB.m */,
 				7EC916271CA9081300B25B50 /* NetEngine */,
 				7EC9160B1CA907CA00B25B50 /* Main.storyboard */,
 				7EC9160E1CA907CA00B25B50 /* Assets.xcassets */,
@@ -321,7 +331,9 @@
 				7EC9160A1CA907CA00B25B50 /* ViewController.m in Sources */,
 				B376A0241E2886220094EFB4 /* NetModel.m in Sources */,
 				7EC916071CA907CA00B25B50 /* AppDelegate.m in Sources */,
+				B376A0271E2CA8710094EFB4 /* NetQB.m in Sources */,
 				7EC916041CA907CA00B25B50 /* main.m in Sources */,
+				B376A02A1E2CAFCC0094EFB4 /* NSString+Encode.m in Sources */,
 				7EC9162A1CA90F2000B25B50 /* NetEngine.m in Sources */,
 				CEFD94BB1D1BCBC8002BFD5B /* NetStatus.m in Sources */,
 			);
