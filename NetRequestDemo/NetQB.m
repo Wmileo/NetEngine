@@ -61,9 +61,9 @@
     
 }
 
-static NSString *sign_key = @"ilwHaGnQtdFxU1cK";
-static NSString *encrypt_iv = @"L+\\~f4,Ir)b$=pkf";
-static NSString *encrypt_key = @"Q1anBa0*ShengHu0";
+static NSString *sign_key = @"ilwHaGnasdfsfdQtdFxUsdfasdf1cKadfsefwef";
+static NSString *encrypt_iv = @"L+\\asdfasdfasdfafasdfaf~f4asdfasdfaf,Ir)b$=pkf";
+static NSString *encrypt_key = @"Q1anBafasdfaasdfasdf0*SheafasdfsdfngHu0";
 
 -(void)handleRequestInfoWithNetEngine:(NetEngine *)engine{
     
