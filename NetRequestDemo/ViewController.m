@@ -7,7 +7,6 @@
 //
 
 #import "ViewController.h"
-#import "NetTest.h"
 #import "NetStatus.h"
 
 @interface ViewController ()
@@ -50,14 +49,7 @@
             
             dispatch_async(dispatch_get_main_queue(), ^{
             
-                [[[NetTest test] requestWithLoad:RequestLoadNoStatusLoading] requestSuccess:^(id JSON) {
-                    
-                    dispatch_semaphore_signal(semap);
-                    NSLog(@"success - %@",JSON);
-                } failure:^(id JSON) {
-                    dispatch_semaphore_signal(semap);
-                    NSLog(@"fail -%@",JSON);
-                }];
+
                 
             });
             

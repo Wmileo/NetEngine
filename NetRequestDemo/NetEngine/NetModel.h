@@ -22,6 +22,10 @@ typedef NS_ENUM(NSInteger, RESPONSE_TYPE){
 @property (nonatomic, copy) NSDictionary *data;//返回业务数据
 @property (nonatomic, assign) RESPONSE_TYPE response;//返回结果类型
 
+@property (nonatomic, strong) NSURLSessionDataTask *task;
+@property (nonatomic, strong) NSError *error;
+@property (nonatomic, strong) id responseObject;
+
 @end
 
 typedef NS_ENUM(NSInteger, REQUEST_TYPE){
@@ -31,10 +35,9 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 
 @interface NetRequestModel : NSObject
 
-@property (nonatomic, copy) NSString *serverURL;//服务器地址
-@property (nonatomic, copy) NSString *path;//请求路径
-@property (nonatomic, copy) NSDictionary *params;//请求参数
 @property (nonatomic, assign) REQUEST_TYPE type;//请求方法
+@property (nonatomic, copy) NSString *path;//最终请求路径
+@property (nonatomic, copy) NSDictionary *params;//最终请求参数
 
 @end
 

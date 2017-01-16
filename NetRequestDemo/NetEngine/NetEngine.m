@@ -12,8 +12,8 @@
 @interface NetEngine()
 
 #pragma mark - 请求内容
-@property (nonatomic, strong) id<NetConfig> config;
-@property (nonatomic, strong) id<NetTipsConfig> tipsConfig;
+@property (nonatomic, weak) id<NetConfig> config;
+@property (nonatomic, weak) id<NetTipsConfig> tipsConfig;
 
 #pragma mark - 请求提示
 @property (nonatomic, assign) BOOL needShowLoading;
@@ -42,11 +42,6 @@
     return self;
 }
 
--(void)releaseConfig{
-    self.config = nil;
-    self.tipsConfig = nil;
-}
-
 #pragma mark - 请求配置
 NSTimeInterval __timeInterval;
 +(void)setupTimeoutInterval:(NSTimeInterval)timeInterval{
@@ -59,7 +54,7 @@ NSTimeInterval __timeInterval;
 }
 
 id<NetConfig> __Config;
-+(void)setupDefaultConfig:(id<NetConfig>)config{
++(void)setupConfig:(id<NetConfig>)config{
     __Config = config;
 }
 
@@ -87,61 +82,59 @@ id<NetTipsConfig> __tipsConfig;
     return self;
 }
 
-#pragma mark - 请求内容
-
--(id)requestPath:(NSString *)path withParams:(NSDictionary *)params type:(REQUEST_TYPE)type{
-    NetRequestModel *request = [[NetRequestModel alloc] init];
-    request.path = path;
-    request.params = params;
-    request.type = type;
+-(id)configRequest:(NetRequestModel *)request{
+    self.requestModel = request;
     return self;
 }
 
 #pragma mark - 发起请求
 - (void)request {
-  if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
-    if ([self.delegate respondsToSelector:@selector(requestWillStart)]) {
-        [self.delegate requestWillStart];
+    if ([self respondsToSelector:@selector(requestInfoWillHandleWithEngine:)]) {
+        [self requestInfoWillHandleWithEngine:self];
     }
     
-    if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(showLoading)]) [self.tipsConfig showLoading];
-    
-    NSDictionary *params = self.params;
-    if ([self respondsToSelector:@selector(requestFinalParamsWithSplicedParams:)]) {
-        params = [self requestFinalParamsWithSplicedParams:self.params];
-    }else if ([self.config respondsToSelector:@selector(finalRequestObjectWithRequest:)]){
-        params = [self.config finalRequestObjectWithRequest:self.params];
+    if ([self.config respondsToSelector:@selector(handleRequestInfoWithNetEngine:)]){
+        [self.config handleRequestInfoWithNetEngine:self];
     }
     
-    switch (self.type) {
-        case REQUEST_GET:
+    if ([self respondsToSelector:@selector(requestWillStartWithNetEngine:)]) {
+        [self requestWillStartWithNetEngine:self];
+    }
+    
+    if (!self.isQuiet) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    }
+    
+    if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(showLoading)]) {
+        [self.tipsConfig showLoading];
+    }
+
+    switch (self.requestModel.type) {
+        case GET:
         {
-            [self.httpManager GET:self.path parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            [self.httpManager GET:self.requestModel.path parameters:self.requestModel.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                 [self requestSuccessTask:task responseObject:responseObject];
-                [self releaseConfig];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [self requestFailureTask:task error:error];
-                [self releaseConfig];
             }];
         }
             break;
-        case REQUEST_POST:
+        case POST:
         {
-            [self.httpManager POST:self.path parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            [self.httpManager POST:self.requestModel.path parameters:self.requestModel.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                 [self requestSuccessTask:task responseObject:responseObject];
-                [self releaseConfig];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [self requestFailureTask:task error:error];
-                [self releaseConfig];
             }];
         }
             break;
             
         default:
+        {
             if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
             if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-
+        }
             break;
     }
 }
@@ -151,52 +144,29 @@ id<NetTipsConfig> __tipsConfig;
     [self request];
 }
 
--(void)reRequest{
-    [self request];
-}
-
 -(void)requestSuccessTask:(NSURLSessionDataTask *)task responseObject:(id)responseObject{
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
     if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    if ([self.delegate respondsToSelector:@selector(requestDidSuccess)]) {
-        [self.delegate requestDidSuccess];
+    NetResponseModel *model = [[NetResponseModel alloc] init];
+    model.task = task;
+    model.responseObject = responseObject;
+    self.responseModel = model;
+    
+    [self.config handleResponseInfoWithNetEngine:self];
+    
+    if ([self respondsToSelector:@selector(requestDidSuccessWithNetEngine:)]) {
+        [self requestDidSuccessWithNetEngine:self];
     }
     
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-    
-    if ([self.config respondsToSelector:@selector(finalResponseObjectWithResponse:)]) {
-        json = [self.config finalResponseObjectWithResponse:json];
+    if (self.CallBack) {
+        self.CallBack(self.responseModel);
     }
     
-    if (!json) {
-//        NSLog(@"\nsuccess------------------\n%@ \n---------------",task.currentRequest);
-        NSString *response = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-        if (self.Success) self.Success(response);
-        if (self.needShowSuccessTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:response type:RESPONSE_TIPS_SUCCESS];
-
-    }else{
-        
-        NSString *tips = json ? [self.config requestMessageWithResponse:json] : nil;
-        
-        if ([self.config requestIsSuccessWithResponse:json]) {
-//        NSLog(@"\nsuccess------------------\n%@ \n---------------",task.currentRequest);
-            if (self.Success) self.Success(json);
-            if (self.needShowSuccessTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:tips type:RESPONSE_TIPS_SUCCESS];
-            
-        }else{
-            
-            NSLog(@"\nmistake------------------\n%@ \n---------------\n%@\n----------------%@",
-                  json,
-                  task.currentRequest,
-                  tips);
-            
-            [self.config requestHandleWithErrorCodeWithResponse:json];
-            
-            if (self.Mistake) self.Mistake(json);
-            if (self.Failure) self.Failure(json);
-            if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:tips type:RESPONSE_TIPS_FAIL];
+    if ([self.tipsConfig respondsToSelector:@selector(showTipsWithNetEngine:)]) {
+        if ((self.responseModel.success && self.needShowSuccessTips) || (!self.responseModel.success && self.needShowErrorTips)) {
+            [self.tipsConfig showTipsWithNetEngine:self];
         }
     }
     
@@ -207,24 +177,28 @@ id<NetTipsConfig> __tipsConfig;
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
     if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 
-    if ([self.delegate respondsToSelector:@selector(requestDidFailure)]) {
-        [self.delegate requestDidFailure];
+    NetResponseModel *model = [[NetResponseModel alloc] init];
+    model.task = task;
+    model.error = error;
+    self.responseModel = model;
+    
+    [self.config handleResponseInfoWithNetEngine:self];
+    
+    if ([self respondsToSelector:@selector(requestDidFailureWithNetEngine:)]) {
+        [self requestDidFailureWithNetEngine:self];
+    }
+   
+    if (self.CallBack) {
+        self.CallBack(self.responseModel);
     }
     
-    NSLog(@"\nlink---------------------\n%@ \n-----------------------\n%@",error,task.currentRequest);
-    
-    NSDictionary *responseObject = [self.config requestLinkErrorMessageWithError:error response:task.response];
-    
-    if (self.FailLink) self.FailLink(responseObject);
-    if (self.Failure) self.Failure(responseObject);
-    
-    if (self.needShowErrorTips && [self.tipsConfig respondsToSelector:@selector(showTips:type:)]) [self.tipsConfig showTips:[self.config requestMessageWithResponse:responseObject] type:RESPONSE_TIPS_LINK_FAIL];
+    if ([self.tipsConfig respondsToSelector:@selector(showTipsWithNetEngine:)]) {
+        if (!self.responseModel.success && self.needShowErrorTips) {
+            [self.tipsConfig showTipsWithNetEngine:self];
+        }
+    }
 
 }
-
--(void)requestOnly{
-}
-
 
 #pragma mark - setter getter
 -(AFHTTPSessionManager *)httpManager{

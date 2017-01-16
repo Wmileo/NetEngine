@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3C89DA55DFD76ECC1C7D2E11 /* libPods-NetRequestDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4718302CD661202D4D33CB50 /* libPods-NetRequestDemo.a */; };
-		7E9A70E61CB4F43B008BFCBE /* NetTipsConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E9A70E51CB4F43B008BFCBE /* NetTipsConfig.m */; };
-		7EB497241CAE60C500F9B64E /* NetTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB497231CAE60C500F9B64E /* NetTest.m */; };
 		7EC916041CA907CA00B25B50 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC916031CA907CA00B25B50 /* main.m */; };
 		7EC916071CA907CA00B25B50 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC916061CA907CA00B25B50 /* AppDelegate.m */; };
 		7EC9160A1CA907CA00B25B50 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC916091CA907CA00B25B50 /* ViewController.m */; };
@@ -36,10 +34,6 @@
 
 /* Begin PBXFileReference section */
 		4718302CD661202D4D33CB50 /* libPods-NetRequestDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NetRequestDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7E9A70E41CB4F43B008BFCBE /* NetTipsConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetTipsConfig.h; sourceTree = "<group>"; };
-		7E9A70E51CB4F43B008BFCBE /* NetTipsConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetTipsConfig.m; sourceTree = "<group>"; };
-		7EB497221CAE60C500F9B64E /* NetTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetTest.h; sourceTree = "<group>"; };
-		7EB497231CAE60C500F9B64E /* NetTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetTest.m; sourceTree = "<group>"; };
 		7EC915FF1CA907CA00B25B50 /* NetRequestDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetRequestDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EC916031CA907CA00B25B50 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		7EC916051CA907CA00B25B50 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -122,10 +116,6 @@
 				7EC916061CA907CA00B25B50 /* AppDelegate.m */,
 				7EC916081CA907CA00B25B50 /* ViewController.h */,
 				7EC916091CA907CA00B25B50 /* ViewController.m */,
-				7EB497221CAE60C500F9B64E /* NetTest.h */,
-				7EB497231CAE60C500F9B64E /* NetTest.m */,
-				7E9A70E41CB4F43B008BFCBE /* NetTipsConfig.h */,
-				7E9A70E51CB4F43B008BFCBE /* NetTipsConfig.m */,
 				7EC916271CA9081300B25B50 /* NetEngine */,
 				7EC9160B1CA907CA00B25B50 /* Main.storyboard */,
 				7EC9160E1CA907CA00B25B50 /* Assets.xcassets */,
@@ -222,7 +212,7 @@
 		7EC915F71CA907C900B25B50 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = ileo;
 				TargetAttributes = {
 					7EC915FE1CA907C900B25B50 = {
@@ -330,10 +320,8 @@
 			files = (
 				7EC9160A1CA907CA00B25B50 /* ViewController.m in Sources */,
 				B376A0241E2886220094EFB4 /* NetModel.m in Sources */,
-				7E9A70E61CB4F43B008BFCBE /* NetTipsConfig.m in Sources */,
 				7EC916071CA907CA00B25B50 /* AppDelegate.m in Sources */,
 				7EC916041CA907CA00B25B50 /* main.m in Sources */,
-				7EB497241CAE60C500F9B64E /* NetTest.m in Sources */,
 				7EC9162A1CA90F2000B25B50 /* NetEngine.m in Sources */,
 				CEFD94BB1D1BCBC8002BFD5B /* NetStatus.m in Sources */,
 			);
@@ -391,8 +379,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -435,8 +425,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -466,7 +458,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = NetRequestDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ileo.NetRequestDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -480,7 +472,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = NetRequestDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ileo.NetRequestDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";

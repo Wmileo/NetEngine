@@ -32,13 +32,13 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  返回数据处理
  */
--(void)responseInfoWithNetEngine:(NetEngine *)engine fillInfo:(NetResponseModel *(^)())info;
+-(void)handleResponseInfoWithNetEngine:(id)engine;
 
 @optional
 /**
  *  请求数据处理
  */
--(void)requestInfoWithNetEngine:(NetEngine *)engine fillInfo:(NetRequestModel *(^)())info;
+-(void)handleRequestInfoWithNetEngine:(id)engine;
 
 @end
 
@@ -63,7 +63,7 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  显示提示信息，没实现的话就没有任何提示
  */
--(void)showTips:(NSString *)tips netEngine:(NetEngine *)engine;
+-(void)showTipsWithNetEngine:(id)engine;
 
 @end
 
@@ -73,25 +73,29 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 @protocol NetEngineDelegate <NSObject>
 
 @optional
+/**
+ *  请求数据处理前调用
+ */
+-(void)requestInfoWillHandleWithEngine:(id)engine;
 
 /**
  *  请求开始时调用
  */
--(void)requestWillStartWithNetEngine:(NetEngine *)engine;
+-(void)requestWillStartWithNetEngine:(id)engine;
 
 /**
  *  请求成功时调用
  */
--(void)requestDidSuccessWithNetEngine:(NetEngine *)engine;
+-(void)requestDidSuccessWithNetEngine:(id)engine;
 
 /**
  *  请求失败时调用
  */
--(void)requestDidFailureWithNetEngine:(NetEngine *)engine;
+-(void)requestDidFailureWithNetEngine:(id)engine;
 
 @end
 
-@interface NetEngine : NSObject
+@interface NetEngine : NSObject <NetEngineDelegate>
 
 @property (nonatomic, strong) NetResponseModel *responseModel;
 @property (nonatomic, strong) NetRequestModel *requestModel;
@@ -136,35 +140,19 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 -(id)setLoadMode:(RequestLoad)mode;
 
 /**
- *  请求回调
+ *  配置请求参数
  */
--(id)setNetDelegate:(id<NetEngineDelegate>)delegate;
-
-#pragma mark - 请求内容
-/**
- *
- * 给requestModel初始化赋值
- *
- */
--(id)requestPath:(NSString *)path
-      withParams:(NSDictionary *)params
-            type:(REQUEST_TYPE)type;
-
+-(id)configRequest:(NetRequestModel *)request;
 
 #pragma mark - 发起请求
 /**
- *  发送请求
+ *  配置callback 发送请求
  */
 -(void)requestCallBack:(void (^)(NetResponseModel *))callBack;
 
 /**
- *  只发送请求 不处理返回结果
+ *  发起请求
  */
--(void)requestOnly;
-
-/**
- *  再次发起请求
- */
--(void)reRequest;
+-(void)request;
 
 @end

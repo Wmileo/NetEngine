@@ -8,7 +8,6 @@
 
 #import "AppDelegate.h"
 #import "NetEngine.h"
-#import "NetTipsConfig.h"
 
 @interface AppDelegate ()
 
@@ -20,7 +19,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-    [NetEngine setupDefaultTipsConfig:[[NetTipsConfig alloc] init]];
     [NetEngine setupTimeoutInterval:10];
     
     return YES;
