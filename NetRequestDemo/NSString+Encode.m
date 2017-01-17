@@ -38,7 +38,7 @@
     return result;
 }
 
-size_t const kKeySize = kCCKeySizeAES128;
+size_t const kKeySize = kCCKeySizeAES256;
 
 -(NSString *)encryptAESWithKey:(NSString *)key iv:(NSString *)iv{
     NSData *contentData = [self dataUsingEncoding:NSUTF8StringEncoding];
