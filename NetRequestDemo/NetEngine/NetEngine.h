@@ -20,8 +20,6 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 
 #define __SELF [[[self class] alloc] init]
 
-@class NetEngine;
-
 /**
  *  请求配置  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
  */
@@ -32,13 +30,13 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  返回数据处理
  */
--(void)handleResponseInfoWithNetEngine:(NetEngine *)engine;
+-(void)handleResponseInfoWithNetEngine:(id)engine;
 
 @optional
 /**
  *  请求数据处理
  */
--(void)handleRequestInfoWithNetEngine:(NetEngine *)engine;
+-(void)handleRequestInfoWithNetEngine:(id)engine;
 
 @end
 
@@ -63,7 +61,7 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  显示提示信息，没实现的话就没有任何提示
  */
--(void)showTipsWithNetEngine:(NetEngine *)engine;
+-(void)showTipsWithNetEngine:(id)engine;
 
 @end
 
@@ -76,24 +74,25 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  请求数据处理前调用
  */
--(void)requestInfoWillHandleWithEngine:(NetEngine *)engine;
+-(void)requestInfoWillHandleWithEngine:(id)engine;
 
 /**
  *  请求开始时调用
  */
--(void)requestWillStartWithNetEngine:(NetEngine *)engine;
+-(void)requestWillStartWithNetEngine:(id)engine;
 
 /**
  *  请求成功时调用
  */
--(void)requestDidSuccessWithNetEngine:(NetEngine *)engine;
+-(void)requestDidSuccessWithNetEngine:(id)engine;
 
 /**
  *  请求失败时调用
  */
--(void)requestDidFailureWithNetEngine:(NetEngine *)engine;
+-(void)requestDidFailureWithNetEngine:(id)engine;
 
 @end
+
 
 @interface NetEngine : NSObject <NetEngineDelegate>
 
