@@ -175,7 +175,7 @@ id<NetTipsConfig> __tipsConfig;
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
     if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-
+    
     NetResponseModel *model = [[NetResponseModel alloc] init];
     model.task = task;
     model.error = error;

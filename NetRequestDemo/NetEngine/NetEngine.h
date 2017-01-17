@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AFHTTPSessionManager.h"
+#import <AFHTTPSessionManager.h>
 #import "NetModel.h"
 
 typedef NS_ENUM(NSInteger, RequestLoad){
