@@ -7,8 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <AFHTTPSessionManager.h>
+#import <AFNetworking.h>
 #import "NetModel.h"
+
 
 typedef NS_ENUM(NSInteger, RequestLoad){
     RequestLoadNone            = 0,       //默认显示状态栏加载

@@ -112,7 +112,7 @@ static NSString *encrypt_key = @"Q1anBa0*ShengHu0";
         NSString *str = [[NSString alloc] initWithData:model.responseObject encoding:NSUTF8StringEncoding];
         NSString *new = [str decryptAESWithKey:encrypt_key iv:encrypt_iv];
         NSLog(@"%@",new);
-        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:new options:NSJSONReadingMutableContainers error:nil];
+//        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:new options:NSJSONReadingMutableContainers error:nil];
     }
     
     if (model.responseObject) {
