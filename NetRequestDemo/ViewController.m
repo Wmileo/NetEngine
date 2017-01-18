@@ -8,7 +8,6 @@
 
 #import "ViewController.h"
 #import "NetStatus.h"
-#import "NetQB.h"
 @interface ViewController ()
 
 
@@ -49,10 +48,7 @@
             
             dispatch_async(dispatch_get_main_queue(), ^{
             
-                [NetQB testCallBack:^(NetResponseModel *model) {
-                    
-                }];
-                
+
             });
             
             dispatch_semaphore_wait(semap, DISPATCH_TIME_FOREVER);
