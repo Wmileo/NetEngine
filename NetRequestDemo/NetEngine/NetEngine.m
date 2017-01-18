@@ -143,6 +143,10 @@ id<NetTipsConfig> __tipsConfig;
     [self request];
 }
 
+-(void)requestOnly{
+    [self request];
+}
+
 -(void)requestSuccessTask:(NSURLSessionDataTask *)task responseObject:(id)responseObject{
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];

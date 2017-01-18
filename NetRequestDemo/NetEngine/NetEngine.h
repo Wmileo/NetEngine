@@ -7,9 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
 #import "NetModel.h"
-
 #import "AFNetworking.h"
 
 typedef NS_ENUM(NSInteger, RequestLoad){
@@ -154,6 +152,6 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  发起请求
  */
--(void)request;
+-(void)requestOnly;
 
 @end
