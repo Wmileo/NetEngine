@@ -8,11 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+@interface NetModel : NSObject
+
+@end
+
 typedef NS_ENUM(NSInteger, RESPONSE_TYPE){
     RESPONSE_SUCCESS,//返回成功
     RESPONSE_FAIL,//返回失败
     RESPONSE_LINK_FAIL//请求失败
 };
+
+
 
 @interface NetResponseModel : NSObject
 

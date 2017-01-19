@@ -8,6 +8,10 @@
 
 #import "NetModel.h"
 
+@implementation NetModel
+
+@end
+
 @implementation NetResponseModel
 
 -(NSInteger)statusCode{
