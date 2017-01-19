@@ -11,8 +11,8 @@
 @interface NetEngine()
 
 #pragma mark - 请求内容
-@property (nonatomic, strong) id<NetConfig> config;
-@property (nonatomic, strong) id<NetTipsConfig> tipsConfig;
+@property (nonatomic, weak) id<NetConfig> config;
+@property (nonatomic, weak) id<NetTipsConfig> tipsConfig;
 
 #pragma mark - 请求提示
 @property (nonatomic, assign) BOOL needShowLoading;
