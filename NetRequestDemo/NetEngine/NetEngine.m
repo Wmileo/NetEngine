@@ -128,7 +128,15 @@ id<NetTipsConfig> __tipsConfig;
             }];
         }
             break;
-            
+        case POST_FormData:
+        {
+            [self.httpManager POST:self.requestModel.path parameters:self.requestModel.params constructingBodyWithBlock:self.requestModel.FormData progress:self.requestModel.UploadProgress success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                [self requestSuccessTask:task responseObject:responseObject];
+            } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                [self requestFailureTask:task error:error];
+            }];
+        }
+            break;
         default:
         {
             if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];

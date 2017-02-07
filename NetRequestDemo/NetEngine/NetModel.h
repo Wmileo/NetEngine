@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "AFNetworking.h"
 
 @interface NetModel : NSObject
 
@@ -39,6 +40,7 @@ typedef NS_ENUM(NSInteger, RESPONSE_TYPE){
 
 typedef NS_ENUM(NSInteger, REQUEST_TYPE){
     POST,
+    POST_FormData,
     GET,
 };
 
@@ -47,6 +49,11 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 @property (nonatomic, assign) REQUEST_TYPE type;//请求方法
 @property (nonatomic, copy) NSString *path;//最终请求路径
 @property (nonatomic, copy) NSDictionary *params;//最终请求参数
+
+@property (nonatomic, copy) void (^FormData)(id<AFMultipartFormData> formData);
+
+@property (nonatomic, copy) void (^UploadProgress)(NSProgress *uploadProgress);
+
 
 -(void)addParams:(NSDictionary *)params;
 
