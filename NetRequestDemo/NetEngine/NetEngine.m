@@ -137,6 +137,11 @@ id<NetTipsConfig> __tipsConfig;
             }];
         }
             break;
+        case UN_REQUEST:
+        {
+            [self requestFailureTask:nil error:nil];
+        }
+            break;
         default:
         {
             if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
@@ -198,7 +203,7 @@ id<NetTipsConfig> __tipsConfig;
     if ([self respondsToSelector:@selector(requestDidFailureWithNetEngine:)]) {
         [self requestDidFailureWithNetEngine:self];
     }
-   
+    
     if (self.CallBack) {
         self.CallBack(self.responseModel);
     }

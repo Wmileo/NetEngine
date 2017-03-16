@@ -39,9 +39,10 @@ typedef NS_ENUM(NSInteger, RESPONSE_TYPE){
 @end
 
 typedef NS_ENUM(NSInteger, REQUEST_TYPE){
-    POST,
-    POST_FormData,
-    GET,
+    POST,//post请求
+    POST_FormData,//post表单请求
+    GET,//Get请求
+    UN_REQUEST,//不发起网络请求，直接返回请求失败
 };
 
 @interface NetRequestModel : NSObject
