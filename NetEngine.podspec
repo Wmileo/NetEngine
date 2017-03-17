@@ -12,12 +12,12 @@ Pod::Spec.new do |s|
 
   s.platform     = :ios, "8.0"
   s.source       = { :git => "https://github.com/Wmileo/NetEngine.git", :tag => s.version.to_s }
+  s.dependency 'AFNetworking'
   s.source_files  = "NetRequestDemo/NetEngine/*.{h,m}"
-  #s.exclude_files = "Classes/Exclude"
   s.requires_arc = true
 
   s.frameworks   = 'CoreTelephony'
 
-  s.dependency 'AFNetworking'
+
 
 end
