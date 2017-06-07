@@ -7,7 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import "NetEngine.h"
 
 
 @interface AppDelegate ()
@@ -21,7 +20,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-    [NetEngine setupTimeoutInterval:10];
     
 
     

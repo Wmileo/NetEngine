@@ -6,13 +6,9 @@
 //  Copyright © 2017年 ileo. All rights reserved.
 //
 
-#import "NetModel.h"
+#import "LRNetModel.h"
 
-@implementation NetModel
-
-@end
-
-@implementation NetResponseModel
+@implementation LRResponseModel
 
 -(NSInteger)statusCode{
     return ((NSHTTPURLResponse *)self.task.response).statusCode;
@@ -29,7 +25,7 @@
 @end
 
 
-@implementation NetRequestModel
+@implementation LRRequestModel
 
 -(void)addParams:(NSDictionary *)params{
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:self.params];
@@ -38,7 +34,9 @@
 }
 
 -(NSString *)description{
-    return [NSString stringWithFormat:@"\npath:%@\nparams:%@",self.path,self.params];
+    return [NSString stringWithFormat:@"\npath:%@\nparams:%@\nstatus:%zd",self.path,self.params,self.netStatus];
 }
 
 @end
+
+

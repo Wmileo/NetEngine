@@ -6,13 +6,14 @@
 //  Copyright © 2016年 ileo. All rights reserved.
 //
 
-#import "NetEngine.h"
+#import "LRNet.h"
+#import "LRNetStatus.h"
 
-@interface NetEngine()
+@interface LRNet()
 
 #pragma mark - 请求内容
-@property (nonatomic, weak) id<NetConfig> config;
-@property (nonatomic, weak) id<NetTipsConfig> tipsConfig;
+@property (nonatomic, weak) id<LRNetConfig> config;
+@property (nonatomic, weak) id<LRNetTipsConfig> tipsConfig;
 
 #pragma mark - 请求提示
 @property (nonatomic, assign) BOOL needShowLoading;
@@ -20,55 +21,33 @@
 @property (nonatomic, assign) BOOL needShowSuccessTips;
 @property (nonatomic, assign) BOOL isQuiet;
 
+#pragma mark - 请求时网络状态
+@property (nonatomic, assign) Net_Status requestNetStatus;
+
 #pragma mark - callback
-@property (nonatomic, copy) void (^CallBack)(NetResponseModel *model);
+@property (nonatomic, copy) void (^CallBack)(LRResponseModel *model);
 
 @end
 
-@implementation NetEngine
+@implementation LRNet
 
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        if (__tipsConfig) {
-            [self resetTipsConfig:__tipsConfig];
-        }
-        if (__Config) {
-            [self resetConfig:__Config];
-        }
-    }
-    return self;
+-(void)dealloc{
+
 }
 
 #pragma mark - 请求配置
-NSTimeInterval __timeInterval;
-+(void)setupTimeoutInterval:(NSTimeInterval)timeInterval{
-    __timeInterval = timeInterval;
-}
-
 -(id)resetTimeout:(NSTimeInterval)timeInterval{
     self.httpManager.requestSerializer.timeoutInterval = timeInterval;
     return self;
 }
 
-id<NetConfig> __Config;
-+(void)setupConfig:(id<NetConfig>)config{
-    __Config = config;
-}
-
--(id)resetConfig:(id<NetConfig>)config{
+-(id)resetConfig:(id<LRNetConfig>)config{
     self.config = config;
     return self;
 }
 
 #pragma mark - 请求提醒配置
-id<NetTipsConfig> __tipsConfig;
-+(void)setupTipsConfig:(id<NetTipsConfig>)tipsConfig{
-    __tipsConfig = tipsConfig;
-}
-
--(id)resetTipsConfig:(id<NetTipsConfig>)tipsConfig{
+-(id)resetTipsConfig:(id<LRNetTipsConfig>)tipsConfig{
     self.tipsConfig = tipsConfig;
     return self;
 }
@@ -81,7 +60,7 @@ id<NetTipsConfig> __tipsConfig;
     return self;
 }
 
--(id)configRequest:(NetRequestModel *)request{
+-(id)configRequest:(LRRequestModel *)request{
     self.requestModel = request;
     return self;
 }
@@ -109,10 +88,12 @@ id<NetTipsConfig> __tipsConfig;
         [self.tipsConfig showLoading];
     }
 
+    self.requestNetStatus = [LRNetStatus sharedInstance].currentNetworkStatusTag;
+    
     switch (self.requestModel.type) {
         case GET:
         {
-            [self.httpManager GET:self.requestModel.path parameters:self.requestModel.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            self.sessionDataTask = [self.httpManager GET:self.requestModel.path parameters:self.requestModel.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                 [self requestSuccessTask:task responseObject:responseObject];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [self requestFailureTask:task error:error];
@@ -121,7 +102,7 @@ id<NetTipsConfig> __tipsConfig;
             break;
         case POST:
         {
-            [self.httpManager POST:self.requestModel.path parameters:self.requestModel.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            self.sessionDataTask = [self.httpManager POST:self.requestModel.path parameters:self.requestModel.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                 [self requestSuccessTask:task responseObject:responseObject];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [self requestFailureTask:task error:error];
@@ -130,7 +111,7 @@ id<NetTipsConfig> __tipsConfig;
             break;
         case POST_FormData:
         {
-            [self.httpManager POST:self.requestModel.path parameters:self.requestModel.params constructingBodyWithBlock:self.requestModel.FormData progress:self.requestModel.UploadProgress success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            self.sessionDataTask = [self.httpManager POST:self.requestModel.path parameters:self.requestModel.params constructingBodyWithBlock:self.requestModel.FormData progress:self.requestModel.UploadProgress success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                 [self requestSuccessTask:task responseObject:responseObject];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [self requestFailureTask:task error:error];
@@ -139,11 +120,13 @@ id<NetTipsConfig> __tipsConfig;
             break;
         case UN_REQUEST:
         {
+            self.sessionDataTask = nil;
             [self requestFailureTask:nil error:nil];
         }
             break;
         default:
         {
+            self.sessionDataTask = nil;
             if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
             if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         }
@@ -151,7 +134,7 @@ id<NetTipsConfig> __tipsConfig;
     }
 }
 
--(void)requestCallBack:(void (^)(NetResponseModel *))callBack{
+-(void)requestCallBack:(void (^)(LRResponseModel *))callBack{
     self.CallBack = callBack;
     [self request];
 }
@@ -160,12 +143,16 @@ id<NetTipsConfig> __tipsConfig;
     [self request];
 }
 
+-(void)reRequest{
+    [self request];
+}
+
 -(void)requestSuccessTask:(NSURLSessionDataTask *)task responseObject:(id)responseObject{
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
     if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    NetResponseModel *model = [[NetResponseModel alloc] init];
+    LRResponseModel *model = [[LRResponseModel alloc] init];
     model.task = task;
     model.responseObject = responseObject;
     self.responseModel = model;
@@ -193,7 +180,7 @@ id<NetTipsConfig> __tipsConfig;
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
     if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    NetResponseModel *model = [[NetResponseModel alloc] init];
+    LRResponseModel *model = [[LRResponseModel alloc] init];
     model.task = task;
     model.error = error;
     self.responseModel = model;
@@ -213,7 +200,6 @@ id<NetTipsConfig> __tipsConfig;
             [self.tipsConfig showTipsWithNetEngine:self];
         }
     }
-
 }
 
 #pragma mark - setter getter
@@ -223,7 +209,7 @@ id<NetTipsConfig> __tipsConfig;
         _httpManager.requestSerializer = [AFHTTPRequestSerializer serializer];
         _httpManager.responseSerializer = [AFHTTPResponseSerializer serializer];
         _httpManager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/html",@"text/plain", nil];
-        _httpManager.requestSerializer.timeoutInterval = __timeInterval == 0 ? 15 : __timeInterval;
+        _httpManager.requestSerializer.timeoutInterval = 15;
     }
     return _httpManager;
 }

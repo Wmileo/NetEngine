@@ -7,7 +7,9 @@
 //
 
 #import "ViewController.h"
-#import "NetStatus.h"
+#import "LRNetStatus.h"
+#import "LRNet.h"
+
 @interface ViewController ()
 
 
@@ -37,6 +39,16 @@
 }
 
 -(void)click{
+    LRNet *net = [[LRNet alloc] init];
+    LRRequestModel *request = [[LRRequestModel alloc] init];
+    request.type = GET;
+    request.path = @"https://wwew.baidu.com";
+    net.requestModel = request;
+    __weak typeof(net) wnet = net;
+    [net requestCallBack:^(LRResponseModel *responseModel) {
+        NSLog(@"%@",wnet.sessionDataTask);
+    }];
+
     
     dispatch_semaphore_t semap = dispatch_semaphore_create(0);
     
@@ -48,7 +60,6 @@
             
             dispatch_async(dispatch_get_main_queue(), ^{
             
-
             });
             
             dispatch_semaphore_wait(semap, DISPATCH_TIME_FOREVER);
@@ -60,7 +71,7 @@
 }
 
 -(void)haha{
-    NSLog(@"haha---%@  --wifi:%@  ---wwan:%@",[NetStatus sharedInstance].currentNetworkStatusDescribe,[NetStatus sharedInstance].wifiIPAddress,[NetStatus sharedInstance].WWANIPAddress);
+    NSLog(@"haha---%@  --wifi:%@  ---wwan:%@",[LRNetStatus sharedInstance].currentNetworkStatusDescribe,[LRNetStatus sharedInstance].wifiIPAddress,[LRNetStatus sharedInstance].WWANIPAddress);
 }
 
 - (void)didReceiveMemoryWarning {

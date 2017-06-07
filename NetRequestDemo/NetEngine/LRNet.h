@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "NetModel.h"
+#import "LRNetModel.h"
 
 typedef NS_ENUM(NSInteger, RequestLoad){
     RequestLoadNone            = 0,       //默认显示状态栏加载
@@ -22,7 +22,7 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  请求配置  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
  */
-@protocol NetConfig <NSObject>
+@protocol LRNetConfig <NSObject>
 
 @required
 
@@ -37,14 +37,12 @@ typedef NS_ENUM(NSInteger, RequestLoad){
  */
 -(void)handleRequestInfoWithNetEngine:(id)engine;
 
-
 @end
-
 
 /**
  *  请求过程相关tips操作   －－－－－－－－－－－－－－－－－－－－－－－－－
  */
-@protocol NetTipsConfig <NSObject>
+@protocol LRNetTipsConfig <NSObject>
 
 @optional
 
@@ -68,7 +66,7 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  请求回调  －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
  */
-@protocol NetEngineDelegate <NSObject>
+@protocol LRNetDelegate <NSObject>
 
 @optional
 /**
@@ -93,45 +91,30 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 
 @end
 
+@interface LRNet : NSObject <LRNetDelegate>
 
-@interface NetEngine : NSObject <NetEngineDelegate>
-
-@property (nonatomic, strong) NetResponseModel *responseModel;
-@property (nonatomic, strong) NetRequestModel *requestModel;
+@property (nonatomic, strong) LRResponseModel *responseModel;
+@property (nonatomic, strong) LRRequestModel *requestModel;
 
 @property (nonatomic, strong) AFHTTPSessionManager *httpManager;
+@property (nonatomic, strong) NSURLSessionDataTask *sessionDataTask;//当发起请求后有值
 
 #pragma mark - 请求配置
-/**
- *  设置全局超时时间，默认15秒
- */
-+(void)setupTimeoutInterval:(NSTimeInterval)timeInterval;
-
 /**
  *  设置超时时间
  */
 -(id)resetTimeout:(NSTimeInterval)timeInterval;
 
 /**
- *  配置全局 NetRequestConfig
- */
-+(void)setupConfig:(id<NetConfig>)config;
-
-/**
  *  配置 NetRequestConfig
  */
--(id)resetConfig:(id<NetConfig>)config;
+-(id)resetConfig:(id<LRNetConfig>)config;
 
 #pragma mark - 请求提醒配置
 /**
- *  配置全局 NetTipsConfig
- */
-+(void)setupTipsConfig:(id<NetTipsConfig>)tipsConfig;
-
-/**
  *  配置定制 NetTipsConfig
  */
--(id)resetTipsConfig:(id<NetTipsConfig>)tipsConfig;
+-(id)resetTipsConfig:(id<LRNetTipsConfig>)tipsConfig;
 
 /**
  *  配置加载过程
@@ -141,16 +124,21 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 /**
  *  配置请求参数
  */
--(id)configRequest:(NetRequestModel *)request;
+-(id)configRequest:(LRRequestModel *)request;
 
 #pragma mark - 发起请求
 /**
  *  配置callback 发送请求
  */
--(void)requestCallBack:(void (^)(NetResponseModel *model))callBack;
+-(void)requestCallBack:(void (^)(LRResponseModel *responseModel))callBack;
 
 /**
- *  发起请求
+ *  重新发起请求
+ */
+-(void)reRequest;
+
+/**
+ *  发起请求 
  */
 -(void)requestOnly;
 

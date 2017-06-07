@@ -6,7 +6,7 @@
 //  Copyright © 2016年 ileo. All rights reserved.
 //
 
-#import "NetStatus.h"
+#import "LRNetStatus.h"
 #import "AFNetworkReachabilityManager.h"
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <UIKit/UIKit.h>
@@ -16,7 +16,7 @@
 
 NSString * const NetStatusDidChanged = @"NetStatusDidChanged";
 
-@interface NetStatus ()
+@interface LRNetStatus ()
 
 @property (nonatomic, assign) Net_Status status;
 
@@ -28,7 +28,7 @@ NSString * const NetStatusDidChanged = @"NetStatusDidChanged";
 
 @end
 
-@implementation NetStatus
+@implementation LRNetStatus
 
 +(instancetype)sharedInstance{
     static id sharedObject = nil;

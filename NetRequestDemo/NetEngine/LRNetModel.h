@@ -8,10 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AFNetworking/AFNetworking.h>
-
-@interface NetModel : NSObject
-
-@end
+#import "LRNetStatus.h"
 
 typedef NS_ENUM(NSInteger, RESPONSE_TYPE){
     RESPONSE_SUCCESS,//返回成功
@@ -19,9 +16,7 @@ typedef NS_ENUM(NSInteger, RESPONSE_TYPE){
     RESPONSE_LINK_FAIL//请求失败
 };
 
-
-
-@interface NetResponseModel : NSObject
+@interface LRResponseModel : NSObject
 
 @property (nonatomic, assign) BOOL success;//是否成功
 @property (nonatomic, copy) NSString *message;//返回信息
@@ -45,16 +40,16 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
     UN_REQUEST,//不发起网络请求，直接返回请求失败
 };
 
-@interface NetRequestModel : NSObject
+@interface LRRequestModel : NSObject
 
 @property (nonatomic, assign) REQUEST_TYPE type;//请求方法
 @property (nonatomic, copy) NSString *path;//最终请求路径
 @property (nonatomic, copy) NSDictionary *params;//最终请求参数
 
 @property (nonatomic, copy) void (^FormData)(id<AFMultipartFormData> formData);
-
 @property (nonatomic, copy) void (^UploadProgress)(NSProgress *uploadProgress);
 
+@property (nonatomic, assign) Net_Status netStatus;//请求网络状态
 
 -(void)addParams:(NSDictionary *)params;
 

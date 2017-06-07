@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-
 typedef NS_ENUM(NSInteger, Net_Status){
     Net_Status_None = 0,
     Net_Status_Wifi,
@@ -19,7 +18,7 @@ typedef NS_ENUM(NSInteger, Net_Status){
     Net_Status_Unknow,
 };
 
-@interface NetStatus : NSObject
+@interface LRNetStatus : NSObject
 
 extern NSString * const NetStatusDidChanged;//当状态改变时会发送通知
 
