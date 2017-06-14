@@ -91,7 +91,7 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 
 @end
 
-@interface LRNet : NSObject <LRNetDelegate>
+@interface LRNet : NSObject <LRNetConfig>
 
 @property (nonatomic, strong) LRResponseModel *responseModel;
 @property (nonatomic, strong) LRRequestModel *requestModel;
@@ -99,16 +99,15 @@ typedef NS_ENUM(NSInteger, RequestLoad){
 @property (nonatomic, strong) AFHTTPSessionManager *httpManager;
 @property (nonatomic, strong) NSURLSessionDataTask *sessionDataTask;//当发起请求后有值
 
-#pragma mark - 请求配置
 /**
  *  设置超时时间
  */
 -(id)resetTimeout:(NSTimeInterval)timeInterval;
 
 /**
- *  配置 NetRequestConfig
+ *  设置回调
  */
--(id)resetConfig:(id<LRNetConfig>)config;
+-(id)setNetDelegate:(id<LRNetDelegate>)delegate;
 
 #pragma mark - 请求提醒配置
 /**

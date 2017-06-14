@@ -12,8 +12,8 @@
 @interface LRNet()
 
 #pragma mark - 请求内容
-@property (nonatomic, weak) id<LRNetConfig> config;
 @property (nonatomic, weak) id<LRNetTipsConfig> tipsConfig;
+@property (nonatomic, weak) id<LRNetDelegate> delegate;
 
 #pragma mark - 请求提示
 @property (nonatomic, assign) BOOL needShowLoading;
@@ -35,14 +35,13 @@
 
 }
 
-#pragma mark - 请求配置
 -(id)resetTimeout:(NSTimeInterval)timeInterval{
     self.httpManager.requestSerializer.timeoutInterval = timeInterval;
     return self;
 }
 
--(id)resetConfig:(id<LRNetConfig>)config{
-    self.config = config;
+-(id)setNetDelegate:(id<LRNetDelegate>)delegate{
+    self.delegate = delegate;
     return self;
 }
 
@@ -68,16 +67,16 @@
 #pragma mark - 发起请求
 - (void)request {
     
-    if ([self respondsToSelector:@selector(requestInfoWillHandleWithEngine:)]) {
-        [self requestInfoWillHandleWithEngine:self];
+    if ([self.delegate respondsToSelector:@selector(requestInfoWillHandleWithEngine:)]) {
+        [self.delegate requestInfoWillHandleWithEngine:self];
     }
     
-    if ([self.config respondsToSelector:@selector(handleRequestInfoWithNetEngine:)]){
-        [self.config handleRequestInfoWithNetEngine:self];
+    if ([self respondsToSelector:@selector(handleRequestInfoWithNetEngine:)]){
+        [self handleRequestInfoWithNetEngine:self];
     }
     
-    if ([self respondsToSelector:@selector(requestWillStartWithNetEngine:)]) {
-        [self requestWillStartWithNetEngine:self];
+    if ([self.delegate respondsToSelector:@selector(requestWillStartWithNetEngine:)]) {
+        [self.delegate requestWillStartWithNetEngine:self];
     }
     
     if (!self.isQuiet) {
@@ -157,10 +156,10 @@
     model.responseObject = responseObject;
     self.responseModel = model;
     
-    [self.config handleResponseInfoWithNetEngine:self];
+    [self handleResponseInfoWithNetEngine:self];
     
-    if ([self respondsToSelector:@selector(requestDidSuccessWithNetEngine:)]) {
-        [self requestDidSuccessWithNetEngine:self];
+    if ([self.delegate respondsToSelector:@selector(requestDidSuccessWithNetEngine:)]) {
+        [self.delegate requestDidSuccessWithNetEngine:self];
     }
     
     if (self.CallBack) {
@@ -185,10 +184,10 @@
     model.error = error;
     self.responseModel = model;
     
-    [self.config handleResponseInfoWithNetEngine:self];
+    [self handleResponseInfoWithNetEngine:self];
     
-    if ([self respondsToSelector:@selector(requestDidFailureWithNetEngine:)]) {
-        [self requestDidFailureWithNetEngine:self];
+    if ([self.delegate respondsToSelector:@selector(requestDidFailureWithNetEngine:)]) {
+        [self.delegate requestDidFailureWithNetEngine:self];
     }
     
     if (self.CallBack) {
@@ -201,6 +200,8 @@
         }
     }
 }
+
+-(void)handleResponseInfoWithNetEngine:(id)engine{}
 
 #pragma mark - setter getter
 -(AFHTTPSessionManager *)httpManager{
