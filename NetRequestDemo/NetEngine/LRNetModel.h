@@ -36,6 +36,7 @@ typedef NS_ENUM(NSInteger, RESPONSE_TYPE){
 typedef NS_ENUM(NSInteger, REQUEST_TYPE){
     POST,//post请求
     POST_FormData,//post表单请求
+    POST_Body,//post body请求
     GET,//Get请求
     UN_REQUEST,//不发起网络请求，直接返回请求失败
 };
@@ -48,6 +49,7 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
 
 @property (nonatomic, copy) void (^FormData)(id<AFMultipartFormData> formData);
 @property (nonatomic, copy) void (^UploadProgress)(NSProgress *uploadProgress);
+@property (nonatomic, copy) NSString *body;
 
 @property (nonatomic, assign) Net_Status netStatus;//请求网络状态
 

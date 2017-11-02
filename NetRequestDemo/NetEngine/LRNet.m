@@ -93,34 +93,48 @@
         case GET:
         {
             self.sessionDataTask = [self.httpManager GET:self.requestModel.path parameters:self.requestModel.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                [self requestSuccessTask:task responseObject:responseObject];
+                [self requestSuccessResponseObject:responseObject];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [self requestFailureTask:task error:error];
+                [self requestFailureError:error];
             }];
         }
             break;
         case POST:
         {
             self.sessionDataTask = [self.httpManager POST:self.requestModel.path parameters:self.requestModel.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                [self requestSuccessTask:task responseObject:responseObject];
+                [self requestSuccessResponseObject:responseObject];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [self requestFailureTask:task error:error];
+                [self requestFailureError:error];
             }];
         }
             break;
         case POST_FormData:
         {
             self.sessionDataTask = [self.httpManager POST:self.requestModel.path parameters:self.requestModel.params constructingBodyWithBlock:self.requestModel.FormData progress:self.requestModel.UploadProgress success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                [self requestSuccessTask:task responseObject:responseObject];
+                [self requestSuccessResponseObject:responseObject];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [self requestFailureTask:task error:error];
+                [self requestFailureError:error];
             }];
+        }
+            break;
+        case POST_Body:
+        {
+            NSMutableURLRequest *request = [self.httpManager.requestSerializer requestWithMethod:@"POST" URLString:self.requestModel.path parameters:self.requestModel.params error:nil];
+            [request setHTTPBody:[self.requestModel.body dataUsingEncoding:NSUTF8StringEncoding]];
+            self.sessionDataTask = [self.httpManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+                if (responseObject) {
+                    [self requestSuccessResponseObject:responseObject];
+                }else{
+                    [self requestFailureError:error];
+                }
+            }];
+            [self.sessionDataTask resume];
         }
             break;
         case UN_REQUEST:
         {
             self.sessionDataTask = nil;
-            [self requestFailureTask:nil error:nil];
+            [self requestFailureError:nil];
         }
             break;
         default:
@@ -146,13 +160,13 @@
     [self request];
 }
 
--(void)requestSuccessTask:(NSURLSessionDataTask *)task responseObject:(id)responseObject{
+-(void)requestSuccessResponseObject:(id)responseObject{
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
     if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
     LRResponseModel *model = [[LRResponseModel alloc] init];
-    model.task = task;
+    model.task = self.sessionDataTask;
     model.responseObject = responseObject;
     self.responseModel = model;
     
@@ -174,13 +188,13 @@
     
 }
 
--(void)requestFailureTask:(NSURLSessionDataTask *)task error:(NSError *)error{
+-(void)requestFailureError:(NSError *)error{
     
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(disappearLoading)]) [self.tipsConfig disappearLoading];
     if (!self.isQuiet) [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
     LRResponseModel *model = [[LRResponseModel alloc] init];
-    model.task = task;
+    model.task = self.sessionDataTask;
     model.error = error;
     self.responseModel = model;
     

@@ -42,13 +42,16 @@
     LRNet *net = [[LRNet alloc] init];
     LRRequestModel *request = [[LRRequestModel alloc] init];
     request.type = GET;
-    request.path = @"https://wwew.baidu.com";
+    request.path = @"https://www.baidu.com";
     net.requestModel = request;
     __weak typeof(net) wnet = net;
     [net requestCallBack:^(LRResponseModel *responseModel) {
         NSLog(@"%@",wnet.sessionDataTask);
     }];
 
+    [[[[LRNet alloc] init] configRequest:request] requestCallBack:^(LRResponseModel *responseModel) {
+        NSLog(@"请求返回:%@",responseModel);
+    }];
     
     dispatch_semaphore_t semap = dispatch_semaphore_create(0);
     
