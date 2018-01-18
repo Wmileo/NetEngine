@@ -108,6 +108,24 @@
             }];
         }
             break;
+        case PUT:
+        {
+            self.sessionDataTask = [self.httpManager PUT:self.requestModel.path parameters:self.requestModel.params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                [self requestSuccessResponseObject:responseObject];
+            } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                [self requestFailureError:error];
+            }];
+        }
+            break;
+        case DELETE:
+        {
+            self.sessionDataTask = [self.httpManager DELETE:self.requestModel.path parameters:self.requestModel.params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                [self requestSuccessResponseObject:responseObject];
+            } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                [self requestFailureError:error];
+            }];
+        }
+            break;
         case POST_FormData:
         {
             self.sessionDataTask = [self.httpManager POST:self.requestModel.path parameters:self.requestModel.params constructingBodyWithBlock:self.requestModel.FormData progress:self.requestModel.UploadProgress success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
