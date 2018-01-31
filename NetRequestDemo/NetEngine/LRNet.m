@@ -9,6 +9,39 @@
 #import "LRNet.h"
 #import "LRNetStatus.h"
 
+@interface LRNetHandle : NSObject
++(instancetype)sharedInstance;
+@property (nonatomic, strong) NSMutableArray<LRNet *> *nets;
++(void)keepNet:(LRNet *)net;
++(void)freeNet:(LRNet *)net;
+@end
+@implementation LRNetHandle
++(instancetype)sharedInstance{
+    static id sharedObject = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedObject = [[self alloc] init];
+    });
+    return sharedObject;
+}
+-(NSMutableArray *)nets{
+    if (!_nets) {
+        _nets = [NSMutableArray arrayWithCapacity:10];
+    }
+    return _nets;
+}
++(void)keepNet:(LRNet *)net{
+    if (![[LRNetHandle sharedInstance].nets containsObject:net]) {
+        [[LRNetHandle sharedInstance].nets addObject:net];
+    }
+}
++(void)freeNet:(LRNet *)net{
+    if ([[LRNetHandle sharedInstance].nets containsObject:net]) {
+        [[LRNetHandle sharedInstance].nets removeObject:net];
+    }
+}
+@end
+
 @interface LRNet()
 
 #pragma mark - 请求内容
@@ -32,7 +65,16 @@
 @implementation LRNet
 
 -(void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reRequest) name:NetStatusDidChanged object:nil];
+    }
+    return self;
 }
 
 -(id)resetTimeout:(NSTimeInterval)timeInterval{
@@ -67,6 +109,8 @@
 #pragma mark - 发起请求
 - (void)request {
     
+    [LRNetHandle keepNet:self];
+    
     if ([self.delegate respondsToSelector:@selector(requestInfoWillHandleWithEngine:)]) {
         [self.delegate requestInfoWillHandleWithEngine:self];
     }
@@ -86,52 +130,64 @@
     if (self.needShowLoading && [self.tipsConfig respondsToSelector:@selector(showLoading)]) {
         [self.tipsConfig showLoading];
     }
-
+    
     self.requestNetStatus = [LRNetStatus sharedInstance].currentNetworkStatusTag;
+    
+    __weak typeof(self) wself = self;
     
     switch (self.requestModel.type) {
         case GET:
         {
             self.sessionDataTask = [self.httpManager GET:self.requestModel.path parameters:self.requestModel.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                [self requestSuccessResponseObject:responseObject];
+                __strong typeof(wself) sself = wself;
+                [sself requestSuccessResponseObject:responseObject];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [self requestFailureError:error];
+                __strong typeof(wself) sself = wself;
+                [sself requestFailureError:error];
             }];
         }
             break;
         case POST:
         {
             self.sessionDataTask = [self.httpManager POST:self.requestModel.path parameters:self.requestModel.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                [self requestSuccessResponseObject:responseObject];
+                __strong typeof(wself) sself = wself;
+                [sself requestSuccessResponseObject:responseObject];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [self requestFailureError:error];
+                __strong typeof(wself) sself = wself;
+                [sself requestFailureError:error];
             }];
         }
             break;
         case PUT:
         {
             self.sessionDataTask = [self.httpManager PUT:self.requestModel.path parameters:self.requestModel.params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                [self requestSuccessResponseObject:responseObject];
+                __strong typeof(wself) sself = wself;
+                [sself requestSuccessResponseObject:responseObject];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [self requestFailureError:error];
+                __strong typeof(wself) sself = wself;
+                [sself requestFailureError:error];
             }];
         }
             break;
         case DELETE:
         {
             self.sessionDataTask = [self.httpManager DELETE:self.requestModel.path parameters:self.requestModel.params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                [self requestSuccessResponseObject:responseObject];
+                __strong typeof(wself) sself = wself;
+                [sself requestSuccessResponseObject:responseObject];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [self requestFailureError:error];
+                __strong typeof(wself) sself = wself;
+                [sself requestFailureError:error];
             }];
         }
             break;
         case POST_FormData:
         {
             self.sessionDataTask = [self.httpManager POST:self.requestModel.path parameters:self.requestModel.params constructingBodyWithBlock:self.requestModel.FormData progress:self.requestModel.UploadProgress success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                [self requestSuccessResponseObject:responseObject];
+                __strong typeof(wself) sself = wself;
+                [sself requestSuccessResponseObject:responseObject];
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [self requestFailureError:error];
+                __strong typeof(wself) sself = wself;
+                [sself requestFailureError:error];
             }];
         }
             break;
@@ -140,10 +196,11 @@
             NSMutableURLRequest *request = [self.httpManager.requestSerializer requestWithMethod:@"POST" URLString:self.requestModel.path parameters:self.requestModel.params error:nil];
             [request setHTTPBody:[self.requestModel.body dataUsingEncoding:NSUTF8StringEncoding]];
             self.sessionDataTask = [self.httpManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+                __strong typeof(wself) sself = wself;
                 if (responseObject) {
-                    [self requestSuccessResponseObject:responseObject];
+                    [sself requestSuccessResponseObject:responseObject];
                 }else{
-                    [self requestFailureError:error];
+                    [sself requestFailureError:error];
                 }
             }];
             [self.sessionDataTask resume];
@@ -204,6 +261,9 @@
         }
     }
     
+    if (self.requestNetStatus != Net_Status_None) {
+        [LRNetHandle freeNet:self];
+    }
 }
 
 -(void)requestFailureError:(NSError *)error{
@@ -231,6 +291,11 @@
             [self.tipsConfig showTipsWithNetEngine:self];
         }
     }
+    
+    if (self.requestNetStatus != Net_Status_None) {
+        [LRNetHandle freeNet:self];
+    }
+    
 }
 
 -(void)handleResponseInfoWithNetEngine:(id)engine{}
@@ -248,3 +313,4 @@
 }
 
 @end
+
