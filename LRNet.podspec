@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "LRNet"
-  s.version      = "1.3.3"
+  s.version      = "1.3.4"
   s.summary      = "LRNet : 网络请求封装"
   s.description  = <<-DESC
 					 针对AFNetworking进行了封装，判断请求返回成功失败，显示对应状态
