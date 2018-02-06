@@ -206,6 +206,21 @@
             [self.sessionDataTask resume];
         }
             break;
+        case PUT_Body:
+        {
+            NSMutableURLRequest *request = [self.httpManager.requestSerializer requestWithMethod:@"PUT" URLString:self.requestModel.path parameters:self.requestModel.params error:nil];
+            [request setHTTPBody:[self.requestModel.body dataUsingEncoding:NSUTF8StringEncoding]];
+            self.sessionDataTask = [self.httpManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+                __strong typeof(wself) sself = wself;
+                if (responseObject) {
+                    [sself requestSuccessResponseObject:responseObject];
+                }else{
+                    [sself requestFailureError:error];
+                }
+            }];
+            [self.sessionDataTask resume];
+        }
+            break;
         case UN_REQUEST:
         {
             self.sessionDataTask = nil;

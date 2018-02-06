@@ -40,6 +40,7 @@ typedef NS_ENUM(NSInteger, REQUEST_TYPE){
     GET,//Get请求
     UN_REQUEST,//不发起网络请求，直接返回请求失败
     PUT,//put请求
+    PUT_Body,//put body请求
     DELETE,//delete请求
 };
 
