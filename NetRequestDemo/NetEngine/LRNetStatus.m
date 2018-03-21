@@ -174,7 +174,6 @@ NSString * const NetStatusDidChanged = @"NetStatusDidChanged";
     return self.telephonyNetworkInfo.currentRadioAccessTechnology;
 }
 
-
 -(Net_Status)WWANStatus{
     if ([self.currentRadioAccessTechnology isEqualToString:CTRadioAccessTechnologyLTE]) {
         return Net_Status_4G;
@@ -199,7 +198,15 @@ NSString * const NetStatusDidChanged = @"NetStatusDidChanged";
 }
 
 -(Net_Status)cuttentStatusBarDataNetworkTag{
-    NSArray *subviews = [[[[UIApplication sharedApplication] valueForKey:@"statusBar"] valueForKey:@"foregroundView"]subviews];
+    
+    NSArray *subviews = nil;
+    id statusBar = [[UIApplication sharedApplication] valueForKey:@"statusBar"];
+    if ([statusBar isKindOfClass:NSClassFromString(@"UIStatusBar_Modern")]) {
+        subviews = [[[statusBar valueForKey:@"statusBar"] valueForKey:@"foregroundView"] subviews];
+    } else {
+        subviews = [[statusBar valueForKey:@"foregroundView"] subviews];
+    }
+    
     NSNumber *dataNetworkItemView = nil;
     for (id subview in subviews) {
         if([subview isKindOfClass:[NSClassFromString(@"UIStatusBarDataNetworkItemView") class]]) {
@@ -207,6 +214,7 @@ NSString * const NetStatusDidChanged = @"NetStatusDidChanged";
             break;
         }
     }
+    
     Net_Status status = Net_Status_Unknow;
     switch ([[dataNetworkItemView valueForKey:@"dataNetworkType"]integerValue]) {
         case 0:
