@@ -107,10 +107,8 @@
 }
 
 #pragma mark - 发起请求
-- (void)request {
-    
-    [LRNetHandle keepNet:self];
-    
+
+- (void)preRequestHandle{
     if ([self.delegate respondsToSelector:@selector(requestInfoWillHandleWithEngine:)]) {
         [self.delegate requestInfoWillHandleWithEngine:self];
     }
@@ -118,6 +116,11 @@
     if ([self respondsToSelector:@selector(handleRequestInfoWithNetEngine:)]){
         [self handleRequestInfoWithNetEngine:self];
     }
+}
+
+- (void)request {
+    
+    [LRNetHandle keepNet:self];
     
     if ([self.delegate respondsToSelector:@selector(requestWillStartWithNetEngine:)]) {
         [self.delegate requestWillStartWithNetEngine:self];
@@ -239,6 +242,7 @@
 
 -(void)requestCallBack:(void (^)(LRResponseModel *))callBack{
     self.CallBack = callBack;
+    [self preRequestHandle];
     [self request];
 }
 
