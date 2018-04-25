@@ -198,7 +198,10 @@
         {
             NSMutableURLRequest *request = [self.httpManager.requestSerializer requestWithMethod:@"POST" URLString:self.requestModel.path parameters:self.requestModel.params error:nil];
             [request setHTTPBody:[self.requestModel.body dataUsingEncoding:NSUTF8StringEncoding]];
-            self.sessionDataTask = [self.httpManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+            
+            self.sessionDataTask = [self.httpManager dataTaskWithRequest:request uploadProgress:^(NSProgress * _Nonnull uploadProgress) {
+            } downloadProgress:^(NSProgress * _Nonnull downloadProgress) {
+            } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
                 __strong typeof(wself) sself = wself;
                 if (responseObject) {
                     [sself requestSuccessResponseObject:responseObject];
@@ -206,6 +209,7 @@
                     [sself requestFailureError:error];
                 }
             }];
+            
             [self.sessionDataTask resume];
         }
             break;
@@ -213,7 +217,10 @@
         {
             NSMutableURLRequest *request = [self.httpManager.requestSerializer requestWithMethod:@"PUT" URLString:self.requestModel.path parameters:self.requestModel.params error:nil];
             [request setHTTPBody:[self.requestModel.body dataUsingEncoding:NSUTF8StringEncoding]];
-            self.sessionDataTask = [self.httpManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+            
+            self.sessionDataTask = [self.httpManager dataTaskWithRequest:request uploadProgress:^(NSProgress * _Nonnull uploadProgress) {
+            } downloadProgress:^(NSProgress * _Nonnull downloadProgress) {
+            } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
                 __strong typeof(wself) sself = wself;
                 if (responseObject) {
                     [sself requestSuccessResponseObject:responseObject];

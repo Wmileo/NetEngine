@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3C89DA55DFD76ECC1C7D2E11 /* libPods-NetRequestDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4718302CD661202D4D33CB50 /* libPods-NetRequestDemo.a */; };
+		1B90A8251F916252F26C6F14 /* Pods_NetRequestDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7020976CE5B9B4F36ADC09F9 /* Pods_NetRequestDemo.framework */; };
 		7EC916041CA907CA00B25B50 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC916031CA907CA00B25B50 /* main.m */; };
 		7EC916071CA907CA00B25B50 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC916061CA907CA00B25B50 /* AppDelegate.m */; };
 		7EC9160A1CA907CA00B25B50 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC916091CA907CA00B25B50 /* ViewController.m */; };
@@ -33,7 +33,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		4718302CD661202D4D33CB50 /* libPods-NetRequestDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NetRequestDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7020976CE5B9B4F36ADC09F9 /* Pods_NetRequestDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NetRequestDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EC915FF1CA907CA00B25B50 /* NetRequestDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetRequestDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EC916031CA907CA00B25B50 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		7EC916051CA907CA00B25B50 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -65,7 +65,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CEFD94BD1D1BD9F8002BFD5B /* CoreTelephony.framework in Frameworks */,
-				3C89DA55DFD76ECC1C7D2E11 /* libPods-NetRequestDemo.a in Frameworks */,
+				1B90A8251F916252F26C6F14 /* Pods_NetRequestDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,7 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				CEFD94BC1D1BD9F8002BFD5B /* CoreTelephony.framework */,
-				4718302CD661202D4D33CB50 /* libPods-NetRequestDemo.a */,
+				7020976CE5B9B4F36ADC09F9 /* Pods_NetRequestDemo.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -177,7 +177,6 @@
 				7EC915FC1CA907C900B25B50 /* Frameworks */,
 				7EC915FD1CA907C900B25B50 /* Resources */,
 				B5C90A9AD80D83724B381FCC /* [CP] Embed Pods Frameworks */,
-				3959CDD5B6917172608BBE97 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -212,7 +211,7 @@
 		7EC915F71CA907C900B25B50 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = ileo;
 				TargetAttributes = {
 					7EC915FE1CA907C900B25B50 = {
@@ -267,21 +266,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3959CDD5B6917172608BBE97 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NetRequestDemo/Pods-NetRequestDemo-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		987D7BCFCFED94F9F9BFD28E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -306,9 +290,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-NetRequestDemo/Pods-NetRequestDemo-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -378,14 +365,22 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -424,14 +419,22 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
