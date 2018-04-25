@@ -19,7 +19,7 @@
 }
 
 -(NSString *)description{
-    return [NSString stringWithFormat:@"\nsuccess:%zd\ncode:%@\nmessage:%@\ndata:%@\nerror:%@\nstatusCode:%zd\nheader:%@",self.success,self.code,self.message,self.data,self.error,self.statusCode,self.allHeaderFields];
+    return [NSString stringWithFormat:@"\nsuccess:%@\ncode:%@\nmessage:%@\ndata:%@\nerror:%@\nstatusCode:%@\nheader:%@",@(self.success),self.code,self.message,self.data,self.error,@(self.statusCode),self.allHeaderFields];
 }
 
 @end
@@ -34,7 +34,7 @@
 }
 
 -(NSString *)description{
-    return [NSString stringWithFormat:@"\npath:%@\nparams:%@\nstatus:%zd",self.path,self.params,self.netStatus];
+    return [NSString stringWithFormat:@"\npath:%@\nparams:%@\nstatus:%@",self.path,self.params,@(self.netStatus)];
 }
 
 @end
