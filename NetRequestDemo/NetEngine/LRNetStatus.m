@@ -48,6 +48,8 @@ NSString * const NetStatusDidChanged = @"NetStatusDidChanged";
     self = [super init];
     if (self) {
         __weak __typeof(self) wself = self;
+        _status = Net_Status_Unknow;
+        _reachablityStatus = AFNetworkReachabilityStatusUnknown;
         [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
             wself.reachablityStatus = status;
         }];
